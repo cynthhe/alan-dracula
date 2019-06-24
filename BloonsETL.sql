@@ -258,13 +258,3 @@ select * from prod_games.bloons.v_batmobile_revenue_kpis_us;
 truncate table prod_games.bloons.bloons_retention_us; 
 insert into prod_games.bloons.bloons_retention_us
 select * from prod_games.bloons.V_BATMOBILE_RETENTION_US;
-
-
-
-
-
-
-
-
-
-
