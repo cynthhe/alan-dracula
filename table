@@ -1,0 +1,20 @@
+begin;
+delete from GDB_unlockedAchievement where date = '2019-06-20';
+
+insert into GDB_unlockedAchievement
+select
+parse_json(data):userUuid as userId
+,parse_json(data):achievementUuid as achievementUuid
+,parse_json(data):packageType as packageType
+,cast(split_part(filename, '/', 3) || '/' || split_part(filename, '/', 4) ||'/'||split_part(filename, '/', 2)  as date) as date
+,all_data
+ 
+from game_database
+where event = 'unlockedAchievement'
+ and event_date  = TO_DATE('20190620','YYYYMMDD'); -- change date here
+  ;
+
+select count(*) from GDB_unlockedAchievement where date = '2019-06-20';
+
+-- rollback;
+-- commit;
