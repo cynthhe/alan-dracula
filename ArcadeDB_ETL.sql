@@ -8,7 +8,7 @@ use warehouse reporting_01;
 --truncate table game_database;
 copy into game_database from
 (select $1,$1:event,$1:data,metadata$filename, to_date(substr(metadata$filename,15,10),'YYYY/MM/DD')
-from @ARCADE_STG/eventfirehose/2019/06/30 (file_Format => 'util_db.public.json') -- change date here
+from @ARCADE_STG/eventfirehose/2019/07/01 (file_Format => 'util_db.public.json') -- change date here
 ) ON_ERROR= ABORT_STATEMENT;
  
 --Also, in your insert this will work better (avoid LIKE if you can, it never gives you good performance but sometimes you gotta do what you gotta do);
@@ -27,7 +27,7 @@ all_data
 from game_database
 where event = 'gotReward'
   and parse_json(data):figure.comingSoon = 'false' 
-  and event_date  = TO_DATE('20190630','YYYYMMDD') -- change date here
+  and event_date  = TO_DATE('20190701','YYYYMMDD') -- change date here
   ;
 
 
@@ -42,7 +42,7 @@ parse_json(data):userUuid as userId
  
 from game_database
 where event = 'unlockedAchievement'
- and event_date  = TO_DATE('20190630','YYYYMMDD'); -- change date here
+ and event_date  = TO_DATE('20190701','YYYYMMDD'); -- change date here
 
 -----------------------------------------------------------------------------
 -- delete duplicates
@@ -86,6 +86,7 @@ select count(*) from game_database where event_date = '2019-06-27';
 select count(*) from game_database where event_date = '2019-06-28';
 select count(*) from game_database where event_date = '2019-06-29';
 select count(*) from game_database where event_date = '2019-06-30';
+select count(*) from game_database where event_date = '2019-07-01';
 
 -- check GDB_unlockedAchievement row count
 select count(*) from GDB_unlockedAchievement where date = '2019-06-20';
@@ -99,6 +100,7 @@ select count(*) from GDB_unlockedAchievement where date = '2019-06-27';
 select count(*) from GDB_unlockedAchievement where date = '2019-06-28';
 select count(*) from GDB_unlockedAchievement where date = '2019-06-29';
 select count(*) from GDB_unlockedAchievement where date = '2019-06-30';
+select count(*) from GDB_unlockedAchievement where date = '2019-07-01';
 
 -- check GDB_gotReward row count
 select count(*) from GDB_gotReward where date = '2019-06-20';
@@ -112,6 +114,7 @@ select count(*) from GDB_gotReward where date = '2019-06-27';
 select count(*) from GDB_gotReward where date = '2019-06-28';
 select count(*) from GDB_gotReward where date = '2019-06-29';
 select count(*) from GDB_gotReward where date = '2019-06-30';
+select count(*) from GDB_gotReward where date = '2019-07-01';
 
 -- check max date
 select max(event_date) from game_database;
