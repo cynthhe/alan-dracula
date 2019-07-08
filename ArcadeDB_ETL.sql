@@ -88,6 +88,11 @@ select count(*) from game_database where event_date = '2019-06-29';
 select count(*) from game_database where event_date = '2019-06-30';
 select count(*) from game_database where event_date = '2019-07-01';
 select count(*) from game_database where event_date = '2019-07-02';
+select count(*) from game_database where event_date = '2019-07-03';
+select count(*) from game_database where event_date = '2019-07-04';
+select count(*) from game_database where event_date = '2019-07-05';
+select count(*) from game_database where event_date = '2019-07-06';
+select count(*) from game_database where event_date = '2019-07-07';
 
 -- check GDB_unlockedAchievement row count
 select count(*) from GDB_unlockedAchievement where date = '2019-06-20';
@@ -103,6 +108,11 @@ select count(*) from GDB_unlockedAchievement where date = '2019-06-29';
 select count(*) from GDB_unlockedAchievement where date = '2019-06-30';
 select count(*) from GDB_unlockedAchievement where date = '2019-07-01';
 select count(*) from GDB_unlockedAchievement where date = '2019-07-02';
+select count(*) from GDB_unlockedAchievement where date = '2019-07-03';
+select count(*) from GDB_unlockedAchievement where date = '2019-07-04';
+select count(*) from GDB_unlockedAchievement where date = '2019-07-05';
+select count(*) from GDB_unlockedAchievement where date = '2019-07-06';
+select count(*) from GDB_unlockedAchievement where date = '2019-07-07';
 
 -- check GDB_gotReward row count
 select count(*) from GDB_gotReward where date = '2019-06-20';
@@ -118,6 +128,11 @@ select count(*) from GDB_gotReward where date = '2019-06-29';
 select count(*) from GDB_gotReward where date = '2019-06-30';
 select count(*) from GDB_gotReward where date = '2019-07-01';
 select count(*) from GDB_gotReward where date = '2019-07-02';
+select count(*) from GDB_gotReward where date = '2019-07-03';
+select count(*) from GDB_gotReward where date = '2019-07-04';
+select count(*) from GDB_gotReward where date = '2019-07-05';
+select count(*) from GDB_gotReward where date = '2019-07-06';
+select count(*) from GDB_gotReward where date = '2019-07-07';
 
 -- check max date
 select max(event_date) from game_database;
