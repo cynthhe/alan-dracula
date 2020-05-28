@@ -1,3 +1,2 @@
-# cn data
-
-Compilation of sql files for Cartoon Network.
+# Cartoon Network :briefcase:
+This is a personal repo for work.
