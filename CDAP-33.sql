@@ -59,7 +59,7 @@ group by 1;
 -- drop arcadedurations view
 drop view arcadedurations;
 
--- arcadesessions and arcadedurations joined
+-- create arcade_session view (arcadesessions and arcadedurations joined)
 create view arcade_session as
 select userid, sessionid, ts::date as date, is_new_session, session_index, round(time_in_app / 60) as duration
 from arcadesessions
@@ -95,24 +95,3 @@ from apprunning
 group by 1,2
 having time_in_app between 1 and 20 and date > '2020-02-29'; -- users who have played an avg b/w 1-20 min + starting from 3/1/20
 order by random() limit 1000; -- get simple random sample of 1000
-
--- segmenting groups
-select distinct case
-when duration between 0 and 4 then 'Not engaged'
-when duration between 4 and 8 then 'Engaged'
-when duration >= 8 then 'Ultra engaged'
-else 'OTHERS'
-end as segments,
-count(1) as num_users,
-concat(round(((num_users / (select count(*) from apprunning)) * 100), 2), '%') as "% of Total"
-from arcade_perday
-group by segments
-order by num_users desc;
-
--- create arcade_perday view
-create view arcade_perday as
-select distinct session_index, userid, sessionid, date, is_new_session, duration
-from arcade_session;
-
--- drop arcade_perday view
-drop view arcade_perday;
