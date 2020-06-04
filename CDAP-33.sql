@@ -11,18 +11,18 @@ lag_events as ( -- events occurring on the same day and with the same user id
   select
   userid,
   sessionid,
-  ts,
-  lag(ts) over (partition by date(ts), userid order by ts) as prev -- partition date and user id
+  submit_time,
+  lag(submit_time) over (partition by date(submit_time), userid order by submit_time) as prev -- partition date and user id
   from session_run
 ),
 new_sessions as ( -- determines whether start of a new session
   select
   userid,
   sessionid,
-  ts,
+  submit_time,
   case -- compares current event time with the previous event time for that user
   when prev is null then 1 -- new session (first event by that user on that day)
-  when timediff(minute, ts, prev) < -20 then 1 -- new session (if more than 20 minutes has elapsed)
+  when timediff(minute, submit_time, prev) < -20 then 1 -- new session (if more than 20 minutes has elapsed)
   else 0 -- not a new session
   end as is_new_session -- creates new column 'is_new_session'
   from lag_events
@@ -31,27 +31,27 @@ session_index as ( -- incrementing each time a new session is found for a given 
   select
   userid,
   sessionid,
-  ts,
+  submit_time,
   is_new_session,
-  sum(is_new_session) over (partition by userid order by ts rows between unbounded preceding and current row) as session_index -- # of sessions for given user
+  sum(is_new_session) over (partition by userid order by submit_time rows between unbounded preceding and current row) as session_index -- # of sessions for given user
   from new_sessions
 )
 select
-distinct userid || sessionid || ts  as session_id, -- creates new session id (concat user id + submit time)
+distinct userid || sessionid || submit_time  as session_id, -- creates new session id (concat user id + submit time)
 userid,
 sessionid,
-ts,
+submit_time,
 is_new_session,
 session_index
 from session_index
-order by userid, sessionid, ts;
+order by userid, sessionid, submit_time;
 
 -- drop arcadesessions view
 drop view arcadesessions;
 
 -- create arcadedurations view
 create view arcadedurations as
-select distinct userid || sessionid || ts  as session_id,
+select distinct userid || sessionid || submit_time  as session_id,
 max(duration) as time_in_app
 from apprunning
 group by 1;
@@ -61,7 +61,7 @@ drop view arcadedurations;
 
 -- create arcade_session view (arcadesessions and arcadedurations joined)
 create view arcade_session as
-select userid, sessionid, ts::date as date, is_new_session, session_index, round(time_in_app / 60) as duration
+select userid, sessionid, submit_time::date as date, is_new_session, session_index, round(time_in_app / 60) as duration
 from arcadesessions
 join arcadedurations on (arcadesessions.session_id = arcadedurations.session_id);
 
