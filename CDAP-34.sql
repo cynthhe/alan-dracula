@@ -29,7 +29,7 @@ from arcade_perday;
 
 -- creates arcade_engagement_segments view
 create view arcade_engagement_segments as
-select month(date) || '-' || year(date) as month, 
+select year(date) || month(date) as month, 
 userid, 
 round(avg(duration)) as avg_time_per_day_this_month,
 case
@@ -64,7 +64,7 @@ create view arcade_active_game as
 select apprunning.submit_time::Date as date, apprunning.userid, game_open.game_name
 from apprunning
 join game_open on (apprunning.userid = game_open.userid) and (apprunning.submit_time = game_open.submit_time)
-where date >= dateadd(day, -7, getdate());
+and game_open.submit_time::Date between dateadd(day, -7, apprunning.submit_time::date) and apprunning.submit_time::date;
 
 -- drop arcade_active_game view
 drop view arcade_active_game;
