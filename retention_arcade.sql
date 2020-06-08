@@ -13,7 +13,8 @@ SELECT
     day1Perc AS Day_1, 
     day7Perc AS Day_7, 
     day30Perc AS Day_30, 
-    MAU_Benchmark 
+    MAU_Benchmark,
+    Segment
 FROM (SELECT 
         a.Game, 
         a.Date, 
@@ -24,7 +25,8 @@ FROM (SELECT
         day1Perc, 
         day7Perc, 
         day30Perc, 
-        1000000 AS MAU_Benchmark
+        1000000 AS MAU_Benchmark,
+        segment AS Segment
       FROM (SELECT 
                 'Arcade' AS game, 
                 TO_DATE(a.submit_time) AS Date, 
@@ -167,4 +169,15 @@ FROM (SELECT
                                                         FROM prod_games.arcade.FIRST_PLAYED_DATE 
                                                         WHERE START_DATE >= '3/4/2019') 
                  GROUP BY 1,2) AS h ON h.game = a.game AND h.date = a.date
+      LEFT JOIN (SELECT 
+                    date, 
+                    ROUND(AVG(duration)) AS avg_time_per_day, 
+                    CASE 
+                        WHEN avg_time_per_day BETWEEN 0 AND 4 THEN 'Not engaged'
+                        WHEN avg_time_per_day BETWEEN 4 AND 8 THEN 'Engaged'
+                        WHEN avg_time_per_day >= 8 THEN 'Ultra engaged'
+                        ELSE 'OTHERS'
+                        END AS segment
+                 FROM prod_games.arcade.arcade_perday
+                 GROUP BY 1) AS j ON j.date = a.date
      );
