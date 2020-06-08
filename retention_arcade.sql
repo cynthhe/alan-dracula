@@ -1,3 +1,8 @@
+USE DATABASE prod_games;
+USE SCHEMA arcade;
+USE warehouse wh_default;
+
+-- retention for CN Arcade
 SELECT 
     Game,
     Date, 
@@ -22,8 +27,8 @@ FROM (SELECT
         1000000 AS MAU_Benchmark
       FROM (SELECT 
                 'Arcade' AS game, 
-                to_date(a.submit_time) AS Date, 
-                COUNT(DISTINCT a.userid) AS DAU 
+                TO_DATE(a.submit_time) AS Date, 
+                COUNT(DISTINCT a.userid) AS DAU -- Gets DAU
             FROM prod_games.arcade.apprunning a 
             WHERE a.country LIKE 'US' AND a.userid IN (SELECT userid 
                                                        FROM prod_games.arcade.FIRST_PLAYED_DATE 
@@ -32,9 +37,9 @@ FROM (SELECT
       LEFT JOIN (SELECT 
                     'Arcade' AS game, 
                     DATEADD('DAY', seq, Date) AS Date, 
-                    COUNT(DISTINCT userid) AS WAU
+                    COUNT(DISTINCT userid) AS WAU -- Gets WAU
                  FROM (SELECT DISTINCT 
-                        to_date(a.submit_time) AS Date, 
+                        TO_DATE(a.submit_time) AS Date, 
                         a.userid 
                        FROM prod_games.arcade.apprunning a 
                        WHERE a.country LIKE 'US' AND a.userid IN (SELECT userid 
@@ -49,7 +54,7 @@ FROM (SELECT
       LEFT JOIN (SELECT 
                     'Arcade' AS game, 
                     DATEADD('DAY', seq, Date) AS Date, 
-                    COUNT(DISTINCT userid) AS MAU 
+                    COUNT(DISTINCT userid) AS MAU -- Gets MAU
                  FROM (SELECT DISTINCT 
                         to_date(a.submit_time) AS Date, 
                         a.userid FROM prod_games.arcade.apprunning a 
@@ -65,7 +70,7 @@ FROM (SELECT
       LEFT JOIN (SELECT 
                     'Arcade' AS game, 
                     DATEADD(day,1,a.date) AS date, 
-                    COALESCE(CAST(c.day1players AS NUMBER(38,6))/CAST(New_users AS NUMBER(38,6)),0) AS day1Perc 
+                    COALESCE(CAST(c.day1players AS NUMBER(38,6))/CAST(New_users AS NUMBER(38,6)),0) AS day1Perc -- Gets Day 1
                  FROM (SELECT 
                         to_date(a.submit_time) AS date, 
                         COUNT(DISTINCT a.userid) AS DAU 
@@ -76,7 +81,7 @@ FROM (SELECT
                        GROUP BY 1) a 
                  JOIN (SELECT 
                         a.start_date AS date, 
-                        COUNT(DISTINCT a.userid) AS New_users 
+                        COUNT(DISTINCT a.userid) AS New_users
                        FROM prod_games.arcade.first_played_date a 
                        WHERE a.country LIKE 'US' AND a.userid IN (SELECT userid 
                                                                   FROM prod_games.arcade.FIRST_PLAYED_DATE 
@@ -95,7 +100,7 @@ FROM (SELECT
       LEFT JOIN (SELECT 
                     'Arcade' AS game, 
                     DATEADD(day,7,a.date) AS date, 
-                    COALESCE(CAST(c.day7players AS NUMBER(38,6))/CAST(New_users AS NUMBER(38,6)),0) AS day7Perc 
+                    COALESCE(CAST(c.day7players AS NUMBER(38,6))/CAST(New_users AS NUMBER(38,6)),0) AS day7Perc -- Gets Day 7
                  FROM (SELECT 
                         to_date(a.submit_time) AS date, 
                         COUNT(DISTINCT a.userid) AS DAU 
@@ -125,7 +130,7 @@ FROM (SELECT
       LEFT JOIN (SELECT 
                     'Arcade' AS game, 
                     DATEADD(day,30,a.date) AS date, 
-                    COALESCE(CAST(c.day30players AS NUMBER(38,6))/CAST(New_users AS NUMBER(38,6)),0) AS day30Perc 
+                    COALESCE(CAST(c.day30players AS NUMBER(38,6))/CAST(New_users AS NUMBER(38,6)),0) AS day30Perc -- Gets Day 30
                  FROM (SELECT 
                         to_date(a.submit_time) AS date, 
                         COUNT(DISTINCT a.userid) AS DAU 
@@ -156,7 +161,7 @@ FROM (SELECT
       LEFT JOIN (SELECT 
                     'Arcade' AS game, 
                     start_date AS date, 
-                    COUNT(DISTINCT userid) AS new_user 
+                    COUNT(DISTINCT userid) AS new_user -- Gets new user count
                  FROM prod_games.arcade.first_played_date 
                  WHERE country LIKE 'US' AND userid IN (SELECT userid 
                                                         FROM prod_games.arcade.FIRST_PLAYED_DATE 
