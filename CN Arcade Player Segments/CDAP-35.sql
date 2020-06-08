@@ -2,7 +2,7 @@ USE DATABASE prod_games;
 USE SCHEMA arcade;
 USE warehouse wh_default;
 
--- retention for CN Arcade
+-- Retention for CN Arcade app
 SELECT 
     Game,
     Date, 
@@ -179,56 +179,94 @@ FROM (SELECT
                         ELSE 'OTHERS'
                         END AS segment
                  FROM prod_games.arcade.arcade_perday
-                 GROUP BY 1) AS j ON j.date = a.date
-     );
+                 GROUP BY 1) AS j ON j.date = a.date);
 
--- retention per game
-select
-Game
-,Date
-,new_user
-,DAU
-,WAU
-,MAU
-,day1Perc as Day_1 
-,day3Perc as Day_3
-,day7Perc as Day_7
-,day14Perc as Day_14
-,day30Perc as Day_30
-
-from(select
-      a.game_name as game
-      ,a.Date
-      ,h.new_user
-      ,cast(a.DAU as NUMBER(38,6)) as DAU
-      ,cast(b.WAU as NUMBER(38,6)) as WAU
-      ,cast(c.MAU as NUMBER(38,6)) as MAU
-      ,coalesce(d.day1Perc,0) as day1Perc 
-      ,coalesce(e.day7Perc,0) as day7Perc
-      ,coalesce(f.day30Perc,0) as day30Perc
-      ,coalesce(g.day3Perc,0) as day3Perc
-      ,coalesce(k.day14Perc,0) as day14Perc
-
-     from (select game_name, to_date(a.submit_time) as Date, count(distinct a.userid) as DAU from prod_games.arcade.game_open a join prod_games.arcade.deviceinfo b on b.userid = a.userid 
-            where b.country like 'US' and a.userid in (select userid from prod_games.arcade.FIRST_PLAYED_DATE where START_DATE >= '3/4/2019') group by 1,2) a
-      left join (select game_name, DATEADD('DAY', seq, Date) AS Date, count(distinct userid) as WAU
-                  FROM (select a.game_name, a.submit_time::Date AS Date, a.userid from prod_games.arcade.game_open a 
-                        join prod_games.arcade.deviceinfo b on b.userid = a.userid 
-                        where b.country like 'US' and a.userid in (select userid from prod_games.arcade.FIRST_PLAYED_DATE where START_DATE >= '3/4/2019') group by 1,2,3) A,
-                        (select seq from (select row_number() over (order by 1 ASC)-1 AS seq from information_schema.columns) where seq < 8) B
-                        group by game_name, DATEADD('DAY', seq, Date)) b on a.game_name = b.game_name and a.date = b.date 
-      left join (select game_name, DATEADD('DAY', seq, Date) AS Date, count(distinct userid) as MAU
-                  FROM (select a.game_name, a.submit_time::Date AS Date, a.userid from prod_games.arcade.game_open a 
-                        join prod_games.arcade.deviceinfo b on b.userid = a.userid 
-                        where b.country like 'US' and a.userid in (select userid from prod_games.arcade.FIRST_PLAYED_DATE where START_DATE >= '3/4/2019') group by 1,2,3) A,
-                        (select seq from (select row_number() over (order by 1 ASC)-1 AS seq from information_schema.columns) where seq < 31) B
-                        group by game_name, DATEADD('DAY', seq, Date)) c on a.game_name = c.game_name and a.date = c.date 
-
-      left join (select a.game_name, dateadd(day,1,a.date) as date, coalesce(cast(c.day1players as NUMBER(38,6))/cast(New_users as NUMBER(38,6)),0) as day1Perc 
-                  from (select game_name, to_date(a.submit_time) as date, count(distinct a.userid) as DAU 
-                        from prod_games.arcade.game_open a join prod_games.arcade.deviceinfo b on b.userid = a.userid 
-                        where b.country like 'US' and a.userid in (select userid from prod_games.arcade.FIRST_PLAYED_DATE where START_DATE >= '3/4/2019')
-                        group by 1,2) a
+-- Retention per game in CN Arcade app
+SELECT 
+    Game, 
+    Date, 
+    new_user, 
+    DAU, 
+    WAU, 
+    MAU, 
+    day1Perc AS Day_1, 
+    day3Perc AS Day_3, 
+    day7Perc AS Day_7, 
+    day14Perc AS Day_14, 
+    day30Perc AS Day_30 
+FROM (SELECT 
+        a.game_name AS game, 
+        a.Date, 
+        h.new_user, 
+        CAST(a.DAU AS NUMBER(38,6)) AS DAU, 
+        CAST(b.WAU AS NUMBER(38,6)) AS WAU, 
+        CAST(c.MAU AS NUMBER(38,6)) AS MAU, 
+        COALESCE(d.day1Perc,0) AS day1Perc, 
+        COALESCE(e.day7Perc,0) AS day7Perc, 
+        COALESCE(f.day30Perc,0) AS day30Perc, 
+        COALESCE(g.day3Perc,0) AS day3Perc, 
+        COALESCE(k.day14Perc,0) AS day14Perc
+      FROM (SELECT 
+                game_name, 
+                TO_DATE(a.submit_time) AS Date, 
+                COUNT(DISTINCT a.userid) AS DAU 
+            FROM prod_games.arcade.game_open a 
+            JOIN prod_games.arcade.deviceinfo b ON b.userid = a.userid 
+            WHERE b.country LIKE 'US' AND a.userid IN (SELECT userid 
+                                                       FROM prod_games.arcade.FIRST_PLAYED_DATE 
+                                                       WHERE START_DATE >= '3/4/2019') 
+            GROUP BY 1,2) a 
+      LEFT JOIN (SELECT 
+                    game_name, 
+                    DATEADD('DAY', seq, Date) AS Date, 
+                    COUNT(DISTINCT userid) AS WAU 
+                 FROM (SELECT 
+                        a.game_name, 
+                        a.submit_time::DATE AS Date, 
+                        a.userid 
+                       FROM prod_games.arcade.game_open a 
+                       JOIN prod_games.arcade.deviceinfo b ON b.userid = a.userid 
+                       WHERE b.country LIKE 'US' AND a.userid IN (SELECT userid 
+                                                                  FROM prod_games.arcade.FIRST_PLAYED_DATE 
+                                                                  WHERE START_DATE >= '3/4/2019') 
+                       GROUP BY 1,2,3) A, 
+                 (SELECT seq 
+                  FROM (SELECT ROW_NUMBER() OVER (ORDER BY 1 ASC)-1 AS seq 
+                                   FROM information_schema.columns) 
+                  WHERE seq < 8) B 
+                 GROUP BY game_name, DATEADD('DAY', seq, Date)) b ON a.game_name = b.game_name AND a.date = b.date 
+      LEFT JOIN (SELECT 
+                    game_name, 
+                    DATEADD('DAY', seq, Date) AS Date, 
+                    COUNT(DISTINCT userid) AS MAU 
+                 FROM (SELECT 
+                        a.game_name, 
+                        a.submit_time::DATE AS Date, 
+                        a.userid 
+                       FROM prod_games.arcade.game_open a 
+                       JOIN prod_games.arcade.deviceinfo b ON b.userid = a.userid 
+                       WHERE b.country LIKE 'US' AND a.userid IN (SELECT userid 
+                                                                  FROM prod_games.arcade.FIRST_PLAYED_DATE 
+                                                                  WHERE START_DATE >= '3/4/2019') 
+                       GROUP BY 1,2,3) A, 
+                 (SELECT seq 
+                  FROM (SELECT ROW_NUMBER() OVER (ORDER BY 1 ASC)-1 AS seq 
+                        FROM information_schema.columns) WHERE seq < 31) B 
+                 GROUP BY game_name, DATEADD('DAY', seq, Date)) c ON a.game_name = c.game_name AND a.date = c.date 
+      LEFT JOIN (SELECT 
+                    a.game_name, 
+                    DATEADD(day,1,a.date) AS date, 
+                    COALESCE(CAST(c.day1players AS NUMBER(38,6))/CAST(New_users AS NUMBER(38,6)),0) AS day1Perc 
+                 FROM (SELECT 
+                        game_name, 
+                        TO_DATE(a.submit_time) AS date, 
+                        COUNT(DISTINCT a.userid) AS DAU 
+                       FROM prod_games.arcade.game_open a 
+                       JOIN prod_games.arcade.deviceinfo b ON b.userid = a.userid 
+                       WHERE b.country LIKE 'US' AND a.userid IN (SELECT userid 
+                                                                  FROM prod_games.arcade.FIRST_PLAYED_DATE 
+                                                                  WHERE START_DATE >= '3/4/2019') 
+                       GROUP BY 1,2) a
                   join (select a.game_name, a.start_date as date, count(distinct a.userid) as New_users 
                         from prod_games.arcade.first_played_games_date a 
                         where a.country like 'US' and a.userid in (select userid from prod_games.arcade.FIRST_PLAYED_DATE where START_DATE >= '3/4/2019')
