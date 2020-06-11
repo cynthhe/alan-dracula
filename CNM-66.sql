@@ -8,10 +8,14 @@ SELECT DISTINCT
     acr_capture.userid||acr_capture.sessionid||acr_capture.submit_time AS id,
     userid, 
     sessionid, 
-    submit_time, 
+    submit_time,
+    ts,
     platform, 
     city, 
     country, 
+    appid,
+    play_userid,
+    episode_name,
     success
 FROM acr_capture;
 
@@ -38,8 +42,17 @@ JOIN capture ON (result.id = capture.id)
 GROUP BY 1
 ORDER BY result.code;
 
--- Regina's Charles log (user id: db775dd8-99a8-4de9-973a-da0a2c3adb20)
-SELECT *
+-- Regina's Charles log (user id: d98fb8c5475f645df88dc8c2186adae3)
+SELECT DISTINCT
+    userid, 
+    sessionid, 
+    ts,
+    platform, 
+    episode_name,
+    capture.success AS capture_success,
+    result.success AS result_success,
+    code
 FROM capture
 JOIN result ON (capture.id = result.id)
-HAVING userid = 'db775dd899a84de9973ada0a2c3adb20';
+HAVING userid = 'd98fb8c5475f645df88dc8c2186adae3'
+AND DATE(submit_time) = '2020-05-28';
