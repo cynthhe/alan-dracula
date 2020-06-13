@@ -14,7 +14,10 @@ SELECT DISTINCT
     city, 
     country, 
     appid,
+    debug_device,
+    user_agent,
     play_userid,
+    play_userloggedin,
     episode_name,
     success
 FROM acr_capture;
@@ -35,12 +38,60 @@ DROP VIEW result;
 
 -- Get the rate of each code firing | capture and result views joined on ID
 SELECT DISTINCT 
-    result.code, 
+    code, 
+    success,
     COUNT(*)
-FROM result
-JOIN capture ON (result.id = capture.id)
-GROUP BY 1
-ORDER BY result.code;
+FROM ACR
+GROUP BY 1,2
+ORDER BY code;
+
+-- Create ACR view
+CREATE VIEW ACR AS
+SELECT DISTINCT
+    userid, 
+    sessionid, 
+    submit_time,
+    ts,
+    platform, 
+    city, 
+    country, 
+    appid,
+    debug_device,
+    user_agent,
+    play_userid,
+    play_userloggedin,
+    episode_name,
+    CASE 
+        WHEN code = 0 OR code IS NULL THEN 'True'
+        ELSE 'False'
+        END AS success,
+    code
+FROM capture
+LEFT JOIN result ON (capture.id = result.id)
+WHERE NOT (episode_name IS NULL AND code = 0);
+
+-- Drop ACR view
+DROP VIEW ACR;
+
+-- Testing ACR view
+SELECT *
+FROM ACR;
+
+SELECT *
+FROM ACR
+WHERE episode_name IS NULL;
+
+SELECT *
+FROM ACR
+WHERE code IS NULL;
+
+SELECT *
+FROM ACR
+WHERE (episode_name IS NOT NULL AND code != 0);
+
+SELECT *
+FROM ACR
+WHERE result_success = 'True';
 
 -- Regina's Charles log (user id: d98fb8c5475f645df88dc8c2186adae3)
 SELECT DISTINCT
@@ -49,10 +100,8 @@ SELECT DISTINCT
     ts,
     platform, 
     episode_name,
-    capture.success AS capture_success,
-    result.success AS result_success,
+    success,
     code
-FROM capture
-JOIN result ON (capture.id = result.id)
-HAVING userid = 'd98fb8c5475f645df88dc8c2186adae3'
+FROM ACR
+WHERE userid = 'd98fb8c5475f645df88dc8c2186adae3'
 AND DATE(submit_time) = '2020-05-28';
