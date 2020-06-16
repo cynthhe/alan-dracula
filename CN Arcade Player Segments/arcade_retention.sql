@@ -5,6 +5,7 @@ USE warehouse wh_default;
 SELECT 
     Game,
     Date, 
+    segment,
     new_user, 
     DAU, 
     WAU, 
@@ -16,6 +17,7 @@ SELECT
 FROM (SELECT 
         a.Game, 
         a.Date, 
+        a.segment,
         h.new_user, 
         CAST(a.DAU AS NUMBER(38,6)) AS DAU, 
         CAST(b.WAU AS NUMBER(38,6)) AS WAU, 
@@ -54,7 +56,7 @@ FROM (SELECT
                   FROM (SELECT ROW_NUMBER() OVER (ORDER BY 1 ASC)-1 AS seq 
                         FROM information_schema.columns) 
                   WHERE seq < 8) B 
-                 GROUP BY 1,2,3) b ON (a.game = b.game) AND (a.date = b.date) 
+                 GROUP BY 1,2,3) b ON (a.game = b.game) AND (a.date = b.date) AND (a.segment = b.segment)
       LEFT JOIN (SELECT 
                     'Arcade' AS game, 
                     DATEADD('DAY', seq, Date) AS Date, 
@@ -74,7 +76,7 @@ FROM (SELECT
                   FROM (SELECT ROW_NUMBER() OVER (ORDER BY 1 ASC)-1 AS seq 
                         FROM information_schema.columns) 
                   WHERE seq < 31) B 
-                 GROUP BY 1,2,3) c ON a.game = c.game AND a.date = c.date 
+                 GROUP BY 1,2,3) c ON (a.game = c.game) AND (a.date = c.date) AND (a.segment = c.segment) 
       LEFT JOIN (SELECT 
                     'Arcade' AS game, 
                     DATEADD(day,1,a.date) AS date, 
@@ -108,7 +110,7 @@ FROM (SELECT
                                                                   FROM prod_games.arcade.FIRST_PLAYED_DATE 
                                                                   WHERE START_DATE >= '3/4/2019') 
                        GROUP BY 1) c 
-                 ON c.cohort_date = a.date) d ON a.game = d.game AND a.date = d.date 
+                 ON c.cohort_date = a.date) d ON (a.game = d.game) AND (a.date = d.date) AND (a.segment = d.segment) 
       LEFT JOIN (SELECT 
                     'Arcade' AS game, 
                     DATEADD(day,7,a.date) AS date,
@@ -142,7 +144,7 @@ FROM (SELECT
                                                                   FROM prod_games.arcade.FIRST_PLAYED_DATE 
                                                                   WHERE START_DATE >= '3/4/2019') 
                        GROUP BY 1) c 
-                 ON c.cohort_date = a.date) e ON a.game = e.game and a.date = e.date 
+                 ON c.cohort_date = a.date) e ON (a.game = e.game) AND (a.date = e.date) AND (a.segment = e.segment) 
       LEFT JOIN (SELECT 
                     'Arcade' AS game, 
                     DATEADD(day,30,a.date) AS date, 
@@ -176,7 +178,7 @@ FROM (SELECT
                        WHERE a.country LIKE 'US' AND a.userid IN (SELECT userid 
                                                                   FROM prod_games.arcade.FIRST_PLAYED_DATE 
                                                                   WHERE START_DATE >= '3/4/2019') 
-                       GROUP BY 1) c ON c.cohort_date = a.date) f ON a.game = f.game AND a.date = f.date 
+                       GROUP BY 1) c ON c.cohort_date = a.date) f ON (a.game = f.game) AND (a.date = f.date) AND (a.segment = f.segment) 
       LEFT JOIN (SELECT 
                     'Arcade' AS game, 
                     start_date AS date,
@@ -188,5 +190,5 @@ FROM (SELECT
                  WHERE a.country LIKE 'US' AND a.userid IN (SELECT userid 
                                                         FROM prod_games.arcade.FIRST_PLAYED_DATE 
                                                         WHERE START_DATE >= '3/4/2019') 
-                 GROUP BY 1,2,3) AS h ON h.game = a.game AND h.date = a.date
+                 GROUP BY 1,2,3) AS h ON (a.game = h.game) AND (a.date = h.date) AND (a.segment = h.segment)
      );
