@@ -2,6 +2,8 @@ USE DATABASE prod_games;
 USE SCHEMA arcade;
 USE warehouse wh_default;
 
+-- Create game_retention view
+CREATE VIEW game_retention AS
 SELECT 
     Game, 
     Date, 
@@ -280,4 +282,7 @@ FROM (SELECT
                                 FROM prod_games.arcade.FIRST_PLAYED_DATE 
                                 WHERE START_DATE >= '3/4/2019') 
                  GROUP BY 1,2,3) AS h ON (a.game_name = h.game_name) AND (a.date = h.date) AND (a.active_game = h.active_game)
-     );           
+     );
+     
+-- Drop game_retention view
+DROP VIEW game_retention;
