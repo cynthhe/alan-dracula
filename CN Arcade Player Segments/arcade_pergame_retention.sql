@@ -3,7 +3,7 @@ USE SCHEMA arcade;
 USE warehouse wh_default;
 
 -- Create game_retention view
-CREATE VIEW pergame_retention AS
+CREATE VIEW arcade_pergame_retention AS
 SELECT 
     Game, 
     Date, 
@@ -35,10 +35,9 @@ FROM (SELECT
                 TO_DATE(a.submit_time) AS Date, 
                 c.active_game,
                 COUNT(DISTINCT a.userid) AS DAU -- Gets DAU
-            FROM prod_games.arcade.game_open a 
-            JOIN prod_games.arcade.deviceinfo b ON (b.userid = a.userid) 
+            FROM prod_games.arcade.apprunning a 
             JOIN arcade_active_game c ON (a.userid = c.userid) AND (a.submit_time::Date = c.date)
-            WHERE b.country LIKE 'US' AND a.userid IN (SELECT userid 
+            WHERE a.country LIKE 'US' AND a.userid IN (SELECT userid 
                                                        FROM prod_games.arcade.FIRST_PLAYED_DATE 
                                                        WHERE START_DATE >= '3/4/2019') 
             GROUP BY 1,2,3) a 
@@ -51,10 +50,9 @@ FROM (SELECT
                         a.submit_time::DATE AS Date, 
                         a.userid, 
                         c.active_game
-                       FROM prod_games.arcade.game_open a 
-                       JOIN prod_games.arcade.deviceinfo b ON (b.userid = a.userid) 
+                       FROM prod_games.arcade.apprunning a 
                        JOIN arcade_active_game c ON (a.userid = c.userid) AND (a.submit_time::Date = c.date)
-                       WHERE b.country LIKE 'US' AND a.userid IN (SELECT userid 
+                       WHERE a.country LIKE 'US' AND a.userid IN (SELECT userid 
                                                                   FROM prod_games.arcade.FIRST_PLAYED_DATE 
                                                                   WHERE START_DATE >= '3/4/2019') 
                        GROUP BY 1,2,3) A, 
@@ -72,10 +70,9 @@ FROM (SELECT
                         a.submit_time::DATE AS Date, 
                         a.userid, 
                         c.active_game
-                       FROM prod_games.arcade.game_open a 
-                       JOIN prod_games.arcade.deviceinfo b ON (b.userid = a.userid) 
+                       FROM prod_games.arcade.apprunning a 
                        JOIN arcade_active_game c ON (a.userid = c.userid) AND (a.submit_time::Date = c.date)
-                       WHERE b.country LIKE 'US' AND a.userid IN (SELECT userid 
+                       WHERE a.country LIKE 'US' AND a.userid IN (SELECT userid 
                                                                   FROM prod_games.arcade.FIRST_PLAYED_DATE 
                                                                   WHERE START_DATE >= '3/4/2019') 
                        GROUP BY 1,2,3) A, 
@@ -92,10 +89,9 @@ FROM (SELECT
                         TO_DATE(a.submit_time) AS date, 
                         c.active_game,
                         COUNT(DISTINCT a.userid) AS DAU 
-                       FROM prod_games.arcade.game_open a 
-                       JOIN prod_games.arcade.deviceinfo b ON b.userid = a.userid 
+                       FROM prod_games.arcade.apprunning a 
                        JOIN arcade_active_game c ON (a.userid = c.userid) AND (a.submit_time::Date = c.date)
-                       WHERE b.country LIKE 'US' AND a.userid IN (SELECT userid 
+                       WHERE a.country LIKE 'US' AND a.userid IN (SELECT userid 
                                                                   FROM prod_games.arcade.FIRST_PLAYED_DATE 
                                                                   WHERE START_DATE >= '3/4/2019') 
                        GROUP BY 1,2) a 
@@ -103,8 +99,8 @@ FROM (SELECT
                         a.start_date AS date, 
                         b.active_game,
                         COUNT(DISTINCT a.userid) AS New_users 
-                       FROM prod_games.arcade.first_played_games_date a 
-                       JOIN arcade_active_game b ON (a.userid = b.userid) AND (a.start_date = b.date) AND (a.game_name = b.active_game)
+                       FROM prod_games.arcade.FIRST_PLAYED_DATE a 
+                       JOIN arcade_active_game b ON (a.userid = b.userid) AND (a.start_date = b.date) 
                        WHERE a.country LIKE 'US' AND a.userid IN (SELECT userid 
                                                                   FROM prod_games.arcade.FIRST_PLAYED_DATE 
                                                                   WHERE START_DATE >= '3/4/2019') 
@@ -114,9 +110,9 @@ FROM (SELECT
                         DATEADD(day,1,a.start_date) AS day1,
                         c.active_game,
                         COUNT(DISTINCT b.userid) AS day1players 
-                       FROM prod_games.arcade.first_played_games_date a 
-                       JOIN prod_games.arcade.game_open b ON b.userid = a.userid AND TO_DATE(b.submit_time) = DATEADD(day,1,a.start_date)
-                       JOIN arcade_active_game c ON (b.userid = c.userid) AND (b.submit_time::Date = c.date) AND (b.game_name = c.active_game)
+                       FROM prod_games.arcade.FIRST_PLAYED_DATE a 
+                       JOIN prod_games.arcade.apprunning b ON b.userid = a.userid AND TO_DATE(b.submit_time) = DATEADD(day,1,a.start_date)
+                       JOIN arcade_active_game c ON (b.userid = c.userid) AND (b.submit_time::Date = c.date) 
                        WHERE a.country LIKE 'US' AND a.userid IN (SELECT userid 
                                                                   FROM prod_games.arcade.FIRST_PLAYED_DATE 
                                                                   WHERE START_DATE >= '3/4/2019') 
@@ -130,10 +126,9 @@ FROM (SELECT
                         TO_DATE(a.submit_time) AS date, 
                         c.active_game,
                         COUNT(DISTINCT a.userid) AS DAU 
-                       FROM prod_games.arcade.game_open a 
-                       JOIN prod_games.arcade.deviceinfo b ON (b.userid = a.userid)
+                       FROM prod_games.arcade.apprunning a 
                        JOIN arcade_active_game c ON (a.userid = c.userid) AND (a.submit_time::Date = c.date)
-                       WHERE b.country LIKE 'US' AND a.userid IN (SELECT userid 
+                       WHERE a.country LIKE 'US' AND a.userid IN (SELECT userid 
                                                                   FROM prod_games.arcade.FIRST_PLAYED_DATE 
                                                                   WHERE START_DATE >= '3/4/2019') 
                        GROUP BY 1,2) a 
@@ -141,8 +136,8 @@ FROM (SELECT
                         a.start_date AS date, 
                         b.active_game,
                         COUNT(DISTINCT a.userid) AS New_users 
-                       FROM prod_games.arcade.first_played_games_date a 
-                       JOIN arcade_active_game b ON (a.userid = b.userid) AND (a.start_date = b.date) AND (a.game_name = b.active_game)
+                       FROM prod_games.arcade.first_played_date a 
+                       JOIN arcade_active_game b ON (a.userid = b.userid) AND (a.start_date = b.date) 
                        WHERE a.country LIKE 'US' AND a.userid IN (SELECT userid 
                                                                   FROM prod_games.arcade.FIRST_PLAYED_DATE 
                                                                   WHERE START_DATE >= '3/4/2019') 
@@ -152,9 +147,9 @@ FROM (SELECT
                         DATEADD(day,7,a.start_date) AS day7, 
                         c.active_game,
                         COUNT(DISTINCT b.userid) AS day7players 
-                       FROM prod_games.arcade.first_played_games_date a 
-                       JOIN prod_games.arcade.game_open b ON b.userid = a.userid AND TO_DATE(b.submit_time) = DATEADD(day,7,a.start_date)
-                       JOIN arcade_active_game c ON (b.userid = c.userid) AND (b.submit_time::Date = c.date) AND (b.game_name = c.active_game)
+                       FROM prod_games.arcade.first_played_date a 
+                       JOIN prod_games.arcade.apprunning b ON b.userid = a.userid AND TO_DATE(b.submit_time) = DATEADD(day,7,a.start_date)
+                       JOIN arcade_active_game c ON (b.userid = c.userid) AND (b.submit_time::Date = c.date) 
                        WHERE a.country LIKE 'US' AND a.userid IN (SELECT userid 
                                                                   FROM prod_games.arcade.FIRST_PLAYED_DATE 
                                                                   WHERE START_DATE >= '3/4/2019') 
@@ -168,10 +163,9 @@ FROM (SELECT
                         TO_DATE(a.submit_time) AS date, 
                         c.active_game,
                         COUNT(DISTINCT a.userid) AS DAU 
-                       FROM prod_games.arcade.game_open a 
-                       JOIN prod_games.arcade.deviceinfo b ON (b.userid = a.userid) 
+                       FROM prod_games.arcade.apprunning a 
                        JOIN arcade_active_game c ON (a.userid = c.userid) AND (a.submit_time::Date = c.date)
-                       WHERE b.country LIKE 'US' AND a.userid IN (SELECT userid 
+                       WHERE a.country LIKE 'US' AND a.userid IN (SELECT userid 
                                                                   FROM prod_games.arcade.FIRST_PLAYED_DATE 
                                                                   WHERE START_DATE >= '3/4/2019') 
                        GROUP BY 1,2) a 
@@ -179,8 +173,8 @@ FROM (SELECT
                         a.start_date AS date, 
                         b.active_game,
                         COUNT(DISTINCT a.userid) AS New_users 
-                       FROM prod_games.arcade.first_played_games_date a 
-                       JOIN arcade_active_game b ON (a.userid = b.userid) AND (a.start_date = b.date) AND (a.game_name = b.active_game)
+                       FROM prod_games.arcade.first_played_date a 
+                       JOIN arcade_active_game b ON (a.userid = b.userid) AND (a.start_date = b.date) 
                        WHERE a.country LIKE 'US' AND a.userid IN (SELECT userid 
                                                                   FROM prod_games.arcade.FIRST_PLAYED_DATE 
                                                                   WHERE START_DATE >= '3/4/2019') 
@@ -190,9 +184,9 @@ FROM (SELECT
                         DATEADD(day,30,a.start_date) AS day30,
                         c.active_game,
                         COUNT(DISTINCT b.userid) AS day30players 
-                       FROM prod_games.arcade.first_played_games_date a 
-                       JOIN prod_games.arcade.game_open b ON b.userid = a.userid AND TO_DATE(b.submit_time) = DATEADD(day,30,a.start_date)
-                       JOIN arcade_active_game c ON (b.userid = c.userid) AND (b.submit_time::Date = c.date) AND (b.game_name = c.active_game)
+                       FROM prod_games.arcade.first_played_date a 
+                       JOIN prod_games.arcade.apprunning b ON b.userid = a.userid AND TO_DATE(b.submit_time) = DATEADD(day,30,a.start_date)
+                       JOIN arcade_active_game c ON (b.userid = c.userid) AND (b.submit_time::Date = c.date) 
                        WHERE a.country LIKE 'US' AND a.userid IN (SELECT userid 
                                                                   FROM prod_games.arcade.FIRST_PLAYED_DATE 
                                                                   WHERE START_DATE >= '3/4/2019') 
@@ -206,10 +200,9 @@ FROM (SELECT
                         TO_DATE(a.submit_time) AS date, 
                         c.active_game,
                         COUNT(DISTINCT a.userid) AS DAU 
-                       FROM prod_games.arcade.game_open a 
-                       JOIN prod_games.arcade.deviceinfo b ON (b.userid = a.userid) 
+                       FROM prod_games.arcade.apprunning a 
                        JOIN arcade_active_game c ON (a.userid = c.userid) AND (a.submit_time::Date = c.date)
-                       WHERE b.country LIKE 'US' AND a.userid IN (SELECT userid 
+                       WHERE a.country LIKE 'US' AND a.userid IN (SELECT userid 
                                                                   FROM prod_games.arcade.FIRST_PLAYED_DATE 
                                                                   WHERE START_DATE >= '3/4/2019') 
                        GROUP BY 1,2) a 
@@ -217,8 +210,8 @@ FROM (SELECT
                         a.start_date AS date, 
                         b.active_game,
                         COUNT(DISTINCT a.userid) AS New_users 
-                       FROM prod_games.arcade.first_played_games_date a 
-                       JOIN arcade_active_game b ON (a.userid = b.userid) AND (a.start_date = b.date) AND (a.game_name = b.active_game)
+                       FROM prod_games.arcade.first_played_date a 
+                       JOIN arcade_active_game b ON (a.userid = b.userid) AND (a.start_date = b.date) 
                        WHERE a.country LIKE 'US' AND a.userid IN (SELECT userid 
                                                                   FROM prod_games.arcade.FIRST_PLAYED_DATE 
                                                                   WHERE START_DATE >= '3/4/2019') 
@@ -228,9 +221,9 @@ FROM (SELECT
                         DATEADD(day,3,a.start_date) AS day3, 
                         c.active_game,
                         COUNT(DISTINCT b.userid) AS day3players 
-                       FROM prod_games.arcade.first_played_games_date a 
-                       JOIN prod_games.arcade.game_open b ON b.userid = a.userid AND TO_DATE(b.submit_time) = DATEADD(day,3,a.start_date)
-                       JOIN arcade_active_game c ON (b.userid = c.userid) AND (b.submit_time::Date = c.date) AND (b.game_name = c.active_game)
+                       FROM prod_games.arcade.first_played_date a 
+                       JOIN prod_games.arcade.apprunning b ON b.userid = a.userid AND TO_DATE(b.submit_time) = DATEADD(day,3,a.start_date)
+                       JOIN arcade_active_game c ON (b.userid = c.userid) AND (b.submit_time::Date = c.date) 
                        WHERE a.country LIKE 'US' AND a.userid IN (SELECT userid 
                                                                   FROM prod_games.arcade.FIRST_PLAYED_DATE 
                                                                   WHERE START_DATE >= '3/4/2019') 
@@ -244,10 +237,9 @@ FROM (SELECT
                         TO_DATE(a.submit_time) AS date, 
                         c.active_game,
                         COUNT(DISTINCT a.userid) AS DAU 
-                       FROM prod_games.arcade.game_open a 
-                       JOIN prod_games.arcade.deviceinfo b ON (b.userid = a.userid) 
+                       FROM prod_games.arcade.apprunning a 
                        JOIN arcade_active_game c ON (a.userid = c.userid) AND (a.submit_time::Date = c.date)
-                       WHERE b.country LIKE 'US' AND a.userid IN (SELECT userid 
+                       WHERE a.country LIKE 'US' AND a.userid IN (SELECT userid 
                                                                   FROM prod_games.arcade.FIRST_PLAYED_DATE 
                                                                   WHERE START_DATE >= '3/4/2019') 
                        GROUP BY 1,2) a 
@@ -255,8 +247,8 @@ FROM (SELECT
                         a.start_date AS date, 
                         b.active_game,
                         COUNT(DISTINCT a.userid) AS New_users 
-                       FROM prod_games.arcade.first_played_games_date a 
-                       JOIN arcade_active_game b ON (a.userid = b.userid) AND (a.start_date = b.date) AND (a.game_name = b.active_game)
+                       FROM prod_games.arcade.first_played_date a 
+                       JOIN arcade_active_game b ON (a.userid = b.userid) AND (a.start_date = b.date) 
                        WHERE a.country LIKE 'US' AND a.userid IN (SELECT userid 
                                                                   FROM prod_games.arcade.FIRST_PLAYED_DATE 
                                                                   WHERE START_DATE >= '3/4/2019') 
@@ -266,9 +258,9 @@ FROM (SELECT
                         DATEADD(day,14,a.start_date) AS day14, 
                         c.active_game,
                         COUNT(DISTINCT b.userid) AS day14players 
-                       FROM prod_games.arcade.first_played_games_date a 
-                       JOIN prod_games.arcade.game_open b ON b.userid = a.userid AND TO_DATE(b.submit_time) = DATEADD(day,14,a.start_date)
-                       JOIN arcade_active_game c ON (b.userid = c.userid) AND (b.submit_time::Date = c.date) AND (b.game_name = c.active_game)
+                       FROM prod_games.arcade.first_played_date a 
+                       JOIN prod_games.arcade.apprunning b ON b.userid = a.userid AND TO_DATE(b.submit_time) = DATEADD(day,14,a.start_date)
+                       JOIN arcade_active_game c ON (b.userid = c.userid) AND (b.submit_time::Date = c.date) 
                        WHERE a.country LIKE 'US' AND a.userid IN (SELECT userid 
                                                                   FROM prod_games.arcade.FIRST_PLAYED_DATE 
                                                                   WHERE START_DATE >= '3/4/2019') 
@@ -278,7 +270,7 @@ FROM (SELECT
                     start_date AS date, 
                     active_game,
                     COUNT(DISTINCT a.userid) AS new_user -- Gets new user count
-                 FROM prod_games.arcade.first_played_games_date a
+                 FROM prod_games.arcade.first_played_date a
                  JOIN arcade_active_game b ON (a.userid = b.userid) AND (a.start_date = b.date)
                  WHERE country LIKE 'US' 
                  AND a.userid IN (SELECT userid 
@@ -288,8 +280,8 @@ FROM (SELECT
      );
      
 -- Drop game_retention view
-DROP VIEW pergame_retention;
+DROP VIEW arcade_pergame_retention;
 
 -- Testing pergame_retention view
 SELECT *
-FROM pergame_retention;
+FROM arcade_pergame_retention;
