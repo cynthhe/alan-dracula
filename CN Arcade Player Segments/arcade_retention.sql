@@ -44,7 +44,7 @@ FROM (SELECT
                     DATEADD('DAY', seq, Date) AS Date, 
                     segment, 
                     COUNT(DISTINCT userid) AS WAU -- Gets WAU 
-                 FROM (SELECT DISTINCT 
+                 FROM (SELECT DISTINCT
                        TO_DATE(a.submit_time) AS Date, 
                        a.userid, 
                        c.segment 
@@ -64,7 +64,7 @@ FROM (SELECT
                     DATEADD('DAY', seq, Date) AS Date, 
                     segment, 
                     COUNT(DISTINCT userid) AS MAU -- Gets MAU 
-                 FROM (SELECT DISTINCT 
+                 FROM (SELECT DISTINCT
                         TO_DATE(a.submit_time) AS Date, 
                         a.userid, 
                         c.segment 
@@ -82,105 +82,117 @@ FROM (SELECT
       LEFT JOIN (SELECT 
                     'Arcade' AS game, 
                     DATEADD(day,1,a.date) AS date, 
-                    segment,
+                    b.segment,
                     COALESCE(CAST(c.day1players AS NUMBER(38,6))/CAST(New_users AS NUMBER(38,6)),0) AS day1Perc -- Gets Day 1
-                 FROM (SELECT 
-                        to_date(a.submit_time) AS date,
-                        e.segment,
+                 FROM (SELECT DISTINCT
+                        TO_DATE(a.submit_time) AS date,
+                        b.segment,
                         COUNT(DISTINCT a.userid) AS DAU
                        FROM prod_games.arcade.apprunning a 
-                       JOIN arcade_engagement_segments e ON (a.userid = e.userid) AND ((YEAR(a.submit_time)||LPAD(MONTH(a.submit_time),2,'0')) = e.yearmonth) 
+                       JOIN arcade_engagement_segments b ON (a.userid = b.userid) AND ((YEAR(a.submit_time)||LPAD(MONTH(a.submit_time),2,'0')) = b.yearmonth) 
                        WHERE a.country LIKE 'US' AND a.userid IN (SELECT userid 
                                                                   FROM prod_games.arcade.FIRST_PLAYED_DATE 
                                                                   WHERE START_DATE >= '3/4/2019') 
                        GROUP BY 1,2) a 
-                 JOIN (SELECT 
+                 JOIN (SELECT DISTINCT
                         a.start_date AS date, 
+                        b.segment,
                         COUNT(DISTINCT a.userid) AS New_users
                        FROM prod_games.arcade.first_played_date a 
+                       JOIN arcade_engagement_segments b ON (a.userid = b.userid) AND ((YEAR(a.start_date)||LPAD(MONTH(a.start_date),2,'0')) = b.yearmonth)
                        WHERE a.country LIKE 'US' AND a.userid IN (SELECT userid 
                                                                   FROM prod_games.arcade.FIRST_PLAYED_DATE 
                                                                   WHERE START_DATE >= '3/4/2019') 
-                       GROUP BY 1) b ON b.date = a.date 
-                 JOIN (SELECT 
+                       GROUP BY 1,2) b ON (a.date = b.date) AND (a.segment = b.segment)
+                 JOIN (SELECT DISTINCT
                         a.start_date AS cohort_date, 
-                        DATEADD(day,1,a.start_date) AS day1 , 
+                        DATEADD(day,1,a.start_date) AS day1, 
+                        c.segment,
                         COUNT(DISTINCT b.userid) AS day1players 
                        FROM prod_games.arcade.first_played_date a 
-                       JOIN prod_games.arcade.apprunning b ON b.userid = a.userid AND TO_DATE(b.submit_time) = DATEADD(day,1,a.start_date) 
+                       JOIN prod_games.arcade.apprunning b ON b.userid = a.userid AND TO_DATE(b.submit_time) = DATEADD(day,1,a.start_date)
+                       JOIN arcade_engagement_segments c ON (b.userid = c.userid) AND ((YEAR(b.submit_time)||LPAD(MONTH(b.submit_time),2,'0')) = c.yearmonth)
                        WHERE a.country LIKE 'US' AND a.userid IN (SELECT userid 
                                                                   FROM prod_games.arcade.FIRST_PLAYED_DATE 
                                                                   WHERE START_DATE >= '3/4/2019') 
-                       GROUP BY 1) c 
-                 ON c.cohort_date = a.date) d ON (a.game = d.game) AND (a.date = d.date) AND (a.segment = d.segment) 
+                       GROUP BY 1,2,3) c 
+                 ON (c.cohort_date = a.date) AND (c.segment = a.segment)) d ON (a.game = d.game) AND (a.date = d.date) AND (a.segment = d.segment) 
       LEFT JOIN (SELECT 
                     'Arcade' AS game, 
                     DATEADD(day,7,a.date) AS date,
-                    segment,
+                    b.segment,
                     COALESCE(CAST(c.day7players AS NUMBER(38,6))/CAST(New_users AS NUMBER(38,6)),0) AS day7Perc -- Gets Day 7
-                 FROM (SELECT 
+                 FROM (SELECT DISTINCT
                         TO_DATE(a.submit_time) AS date,
-                        e.segment,
+                        b.segment,
                         COUNT(DISTINCT a.userid) AS DAU 
                        FROM prod_games.arcade.apprunning a 
-                       JOIN arcade_engagement_segments e ON (a.userid = e.userid) AND ((YEAR(a.submit_time)||LPAD(MONTH(a.submit_time),2,'0')) = e.yearmonth)
+                       JOIN arcade_engagement_segments b ON (a.userid = b.userid) AND ((YEAR(a.submit_time)||LPAD(MONTH(a.submit_time),2,'0')) = b.yearmonth)
                        WHERE a.country LIKE 'US' AND a.userid IN (SELECT userid 
                                                                   FROM prod_games.arcade.FIRST_PLAYED_DATE 
                                                                   WHERE START_DATE >= '3/4/2019') 
                        GROUP BY 1,2) a 
-                 JOIN (SELECT 
+                 JOIN (SELECT DISTINCT
                         a.start_date AS date, 
+                        b.segment,
                         COUNT(DISTINCT a.userid) AS New_users 
                        FROM prod_games.arcade.first_played_date a 
+                       JOIN arcade_engagement_segments b ON (a.userid = b.userid) AND ((YEAR(a.start_date)||LPAD(MONTH(a.start_date),2,'0')) = b.yearmonth)
                        WHERE a.country LIKE 'US' AND a.userid IN (SELECT userid 
                                                                   FROM prod_games.arcade.FIRST_PLAYED_DATE 
                                                                   WHERE START_DATE >= '3/4/2019') 
-                       GROUP BY 1) b on b.date = a.date 
-                 JOIN (SELECT 
+                       GROUP BY 1,2) b ON (a.date = b.date) AND (a.segment = b.segment)
+                 JOIN (SELECT DISTINCT
                         a.start_date AS cohort_date, 
                         DATEADD(day,7,a.start_date) AS day7, 
+                        c.segment,
                         COUNT(DISTINCT b.userid) AS day7players 
                        FROM prod_games.arcade.first_played_date a 
                        JOIN prod_games.arcade.apprunning b ON b.userid = a.userid AND to_date(b.submit_time) = dateadd(day,7,a.start_date) 
+                       JOIN arcade_engagement_segments c ON (b.userid = c.userid) AND ((YEAR(b.submit_time)||LPAD(MONTH(b.submit_time),2,'0')) = c.yearmonth)
                        WHERE a.country LIKE 'US' AND a.userid IN (SELECT userid 
                                                                   FROM prod_games.arcade.FIRST_PLAYED_DATE 
                                                                   WHERE START_DATE >= '3/4/2019') 
-                       GROUP BY 1) c 
-                 ON c.cohort_date = a.date) e ON (a.game = e.game) AND (a.date = e.date) AND (a.segment = e.segment) 
+                       GROUP BY 1,2,3) c 
+                 ON (c.cohort_date = a.date) AND (c.segment = a.segment)) e ON (a.game = e.game) AND (a.date = e.date) AND (a.segment = e.segment) 
       LEFT JOIN (SELECT 
                     'Arcade' AS game, 
                     DATEADD(day,30,a.date) AS date, 
-                    segment,
+                    c.segment,
                     COALESCE(CAST(c.day30players AS NUMBER(38,6))/CAST(New_users AS NUMBER(38,6)),0) AS day30Perc -- Gets Day 30
-                 FROM (SELECT 
+                 FROM (SELECT DISTINCT
                         TO_DATE(a.submit_time) AS date,
-                        e.segment,
+                        c.segment,
                         COUNT(DISTINCT a.userid) AS DAU 
-                       FROM prod_games.arcade.appstart a 
-                       JOIN arcade_engagement_segments e ON (a.userid = e.userid) AND ((YEAR(a.submit_time)||LPAD(MONTH(a.submit_time),2,'0')) = e.yearmonth)
-                       JOIN prod_games.arcade.deviceinfo b ON b.userid = a.userid 
+                       FROM prod_games.arcade.appstart a
+                       JOIN prod_games.arcade.deviceinfo b ON (b.userid = a.userid)
+                       JOIN arcade_engagement_segments c ON (a.userid = c.userid) AND ((YEAR(a.submit_time)||LPAD(MONTH(a.submit_time),2,'0')) = c.yearmonth)
                        WHERE b.country LIKE 'US' AND a.userid IN (SELECT userid 
                                                                   FROM prod_games.arcade.FIRST_PLAYED_DATE 
                                                                   WHERE START_DATE >= '3/4/2019') 
                        GROUP BY 1,2) a 
-                 JOIN (SELECT 
+                 JOIN (SELECT DISTINCT
                         a.start_date AS date, 
+                        b.segment,
                         COUNT(DISTINCT a.userid) AS New_users 
                        FROM prod_games.arcade.first_played_date a 
+                       JOIN arcade_engagement_segments b ON (a.userid = b.userid) AND ((YEAR(a.start_date)||LPAD(MONTH(a.start_date),2,'0')) = b.yearmonth)
                        WHERE a.country LIKE 'US' AND a.userid IN (SELECT userid 
                                                                   FROM prod_games.arcade.FIRST_PLAYED_DATE 
                                                                   WHERE START_DATE >= '3/4/2019') 
-                       GROUP BY 1) b ON b.date = a.date 
-                 JOIN (SELECT 
+                       GROUP BY 1,2) b ON (b.date = a.date) AND (b.segment = a.segment) 
+                 JOIN (SELECT DISTINCT
                         a.start_date AS cohort_date, 
                         DATEADD(day,30,a.start_date) AS day30, 
+                        c.segment,
                         COUNT(DISTINCT b.userid) AS day30players 
                        FROM prod_games.arcade.first_played_date a 
                        JOIN prod_games.arcade.apprunning b ON b.userid = a.userid AND to_date(b.submit_time) = dateadd(day,30,a.start_date) 
+                       JOIN arcade_engagement_segments c ON (b.userid = c.userid) AND ((YEAR(b.submit_time)||LPAD(MONTH(b.submit_time),2,'0')) = c.yearmonth)
                        WHERE a.country LIKE 'US' AND a.userid IN (SELECT userid 
                                                                   FROM prod_games.arcade.FIRST_PLAYED_DATE 
                                                                   WHERE START_DATE >= '3/4/2019') 
-                       GROUP BY 1) c ON c.cohort_date = a.date) f ON (a.game = f.game) AND (a.date = f.date) AND (a.segment = f.segment) 
+                       GROUP BY 1,2,3) c ON (c.cohort_date = a.date) AND (c.segment = a.segment)) f ON (a.game = f.game) AND (a.date = f.date) AND (a.segment = f.segment) 
       LEFT JOIN (SELECT 
                     'Arcade' AS game, 
                     start_date AS date,
@@ -197,3 +209,7 @@ FROM (SELECT
      
 -- Drop arcade_retention view
 DROP VIEW arcade_retention;
+
+-- Testing arcade_retention view
+SELECT *
+FROM arcade_retention;
