@@ -15,5 +15,5 @@ This is a personal repo for work.
   - Creation of *arcade_engagement_segments* view
   - Creation of *arcade_active_game* view
 - **CDAP-35**: Retention SQL reporting
-  - Arcade retention query
-  - Per game retention query
+  - Creation of *arcade_retention* view
+  - Creation of *arcade_pergame_retention* view
