@@ -3,7 +3,7 @@ USE SCHEMA arcade;
 USE warehouse wh_default;
 
 -- Create game_retention view
-CREATE VIEW arcade_pergame_retention AS
+CREATE OR REPLACE VIEW arcade_pergame_retention AS
 SELECT 
     Game, 
     Date, 
@@ -285,3 +285,6 @@ DROP VIEW arcade_pergame_retention;
 -- Testing pergame_retention view
 SELECT *
 FROM arcade_pergame_retention;
+
+-- Grant LOOKER_READ role
+GRANT SELECT ON prod_games.arcade.arcade_pergame_retention TO looker_read;
