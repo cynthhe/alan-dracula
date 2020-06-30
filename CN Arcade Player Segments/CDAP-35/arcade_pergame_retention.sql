@@ -33,7 +33,7 @@ FROM (SELECT
       FROM (SELECT 
                 'Arcade' AS game, 
                 TO_DATE(a.submit_time) AS Date, 
-                c.active_game,
+                CASE WHEN c.active_game LIKE 'Smashy%' THEN 'Smashy Pinata' ELSE c.active_game END AS active_game,
                 COUNT(DISTINCT a.userid) AS DAU -- Gets DAU
             FROM prod_games.arcade.apprunning a 
             JOIN arcade_active_game c ON (a.userid = c.userid) AND (a.submit_time::Date = c.date)
@@ -49,7 +49,7 @@ FROM (SELECT
                  FROM (SELECT DISTINCT
                         a.submit_time::DATE AS Date, 
                         a.userid, 
-                        c.active_game
+                        CASE WHEN c.active_game LIKE 'Smashy%' THEN 'Smashy Pinata' ELSE c.active_game END AS active_game
                        FROM prod_games.arcade.apprunning a 
                        JOIN arcade_active_game c ON (a.userid = c.userid) AND (a.submit_time::Date = c.date)
                        WHERE a.country LIKE 'US' AND a.userid IN (SELECT userid 
@@ -69,7 +69,7 @@ FROM (SELECT
                  FROM (SELECT DISTINCT
                         a.submit_time::DATE AS Date, 
                         a.userid, 
-                        c.active_game
+                        CASE WHEN c.active_game LIKE 'Smashy%' THEN 'Smashy Pinata' ELSE c.active_game END AS active_game
                        FROM prod_games.arcade.apprunning a 
                        JOIN arcade_active_game c ON (a.userid = c.userid) AND (a.submit_time::Date = c.date)
                        WHERE a.country LIKE 'US' AND a.userid IN (SELECT userid 
@@ -87,7 +87,7 @@ FROM (SELECT
                     COALESCE(CAST(c.day1players AS NUMBER(38,6))/CAST(New_users AS NUMBER(38,6)),0) AS day1Perc -- Gets Day 1
                  FROM (SELECT DISTINCT
                         TO_DATE(a.submit_time) AS date, 
-                        c.active_game,
+                        CASE WHEN c.active_game LIKE 'Smashy%' THEN 'Smashy Pinata' ELSE c.active_game END AS active_game,
                         COUNT(DISTINCT a.userid) AS DAU 
                        FROM prod_games.arcade.apprunning a 
                        JOIN arcade_active_game c ON (a.userid = c.userid) AND (a.submit_time::Date = c.date)
@@ -97,7 +97,7 @@ FROM (SELECT
                        GROUP BY 1,2) a 
                  JOIN (SELECT DISTINCT
                         a.start_date AS date, 
-                        b.active_game,
+                        CASE WHEN b.active_game LIKE 'Smashy%' THEN 'Smashy Pinata' ELSE b.active_game END AS active_game,
                         COUNT(DISTINCT a.userid) AS New_users 
                        FROM prod_games.arcade.FIRST_PLAYED_DATE a 
                        JOIN arcade_active_game b ON (a.userid = b.userid) AND (a.start_date = b.date) 
@@ -108,7 +108,7 @@ FROM (SELECT
                  JOIN (SELECT DISTINCT
                         a.start_date AS cohort_date, 
                         DATEADD(day,1,a.start_date) AS day1,
-                        c.active_game,
+                        CASE WHEN c.active_game LIKE 'Smashy%' THEN 'Smashy Pinata' ELSE c.active_game END AS active_game,
                         COUNT(DISTINCT b.userid) AS day1players 
                        FROM prod_games.arcade.FIRST_PLAYED_DATE a 
                        JOIN prod_games.arcade.apprunning b ON b.userid = a.userid AND TO_DATE(b.submit_time) = DATEADD(day,1,a.start_date)
@@ -124,7 +124,7 @@ FROM (SELECT
                     COALESCE(CAST(c.day7players AS NUMBER(38,6))/CAST(New_users AS NUMBER(38,6)),0) AS day7Perc -- Gets Day 7
                  FROM (SELECT DISTINCT
                         TO_DATE(a.submit_time) AS date, 
-                        c.active_game,
+                        CASE WHEN c.active_game LIKE 'Smashy%' THEN 'Smashy Pinata' ELSE c.active_game END AS active_game,
                         COUNT(DISTINCT a.userid) AS DAU 
                        FROM prod_games.arcade.apprunning a 
                        JOIN arcade_active_game c ON (a.userid = c.userid) AND (a.submit_time::Date = c.date)
@@ -134,7 +134,7 @@ FROM (SELECT
                        GROUP BY 1,2) a 
                  JOIN (SELECT DISTINCT
                         a.start_date AS date, 
-                        b.active_game,
+                        CASE WHEN b.active_game LIKE 'Smashy%' THEN 'Smashy Pinata' ELSE b.active_game END AS active_game,
                         COUNT(DISTINCT a.userid) AS New_users 
                        FROM prod_games.arcade.first_played_date a 
                        JOIN arcade_active_game b ON (a.userid = b.userid) AND (a.start_date = b.date) 
@@ -145,7 +145,7 @@ FROM (SELECT
                  JOIN (SELECT DISTINCT
                         a.start_date AS cohort_date, 
                         DATEADD(day,7,a.start_date) AS day7, 
-                        c.active_game,
+                        CASE WHEN c.active_game LIKE 'Smashy%' THEN 'Smashy Pinata' ELSE c.active_game END AS active_game,
                         COUNT(DISTINCT b.userid) AS day7players 
                        FROM prod_games.arcade.first_played_date a 
                        JOIN prod_games.arcade.apprunning b ON b.userid = a.userid AND TO_DATE(b.submit_time) = DATEADD(day,7,a.start_date)
@@ -161,7 +161,7 @@ FROM (SELECT
                     COALESCE(CAST(c.day30players AS NUMBER(38,6))/CAST(New_users AS NUMBER(38,6)),0) AS day30Perc -- Gets Day 30
                  FROM (SELECT DISTINCT
                         TO_DATE(a.submit_time) AS date, 
-                        c.active_game,
+                        CASE WHEN c.active_game LIKE 'Smashy%' THEN 'Smashy Pinata' ELSE c.active_game END AS active_game,
                         COUNT(DISTINCT a.userid) AS DAU 
                        FROM prod_games.arcade.apprunning a 
                        JOIN arcade_active_game c ON (a.userid = c.userid) AND (a.submit_time::Date = c.date)
@@ -171,7 +171,7 @@ FROM (SELECT
                        GROUP BY 1,2) a 
                  JOIN (SELECT DISTINCT
                         a.start_date AS date, 
-                        b.active_game,
+                        CASE WHEN b.active_game LIKE 'Smashy%' THEN 'Smashy Pinata' ELSE b.active_game END AS active_game,
                         COUNT(DISTINCT a.userid) AS New_users 
                        FROM prod_games.arcade.first_played_date a 
                        JOIN arcade_active_game b ON (a.userid = b.userid) AND (a.start_date = b.date) 
@@ -182,7 +182,7 @@ FROM (SELECT
                  JOIN (SELECT DISTINCT
                         a.start_date AS cohort_date, 
                         DATEADD(day,30,a.start_date) AS day30,
-                        c.active_game,
+                        CASE WHEN c.active_game LIKE 'Smashy%' THEN 'Smashy Pinata' ELSE c.active_game END AS active_game,
                         COUNT(DISTINCT b.userid) AS day30players 
                        FROM prod_games.arcade.first_played_date a 
                        JOIN prod_games.arcade.apprunning b ON b.userid = a.userid AND TO_DATE(b.submit_time) = DATEADD(day,30,a.start_date)
@@ -198,7 +198,7 @@ FROM (SELECT
                     COALESCE(CAST(c.day3players AS NUMBER(38,6))/CAST(New_users AS NUMBER(38,6)),0) AS day3Perc -- Gets Day 3
                  FROM (SELECT DISTINCT
                         TO_DATE(a.submit_time) AS date, 
-                        c.active_game,
+                        CASE WHEN c.active_game LIKE 'Smashy%' THEN 'Smashy Pinata' ELSE c.active_game END AS active_game,
                         COUNT(DISTINCT a.userid) AS DAU 
                        FROM prod_games.arcade.apprunning a 
                        JOIN arcade_active_game c ON (a.userid = c.userid) AND (a.submit_time::Date = c.date)
@@ -208,7 +208,7 @@ FROM (SELECT
                        GROUP BY 1,2) a 
                  JOIN (SELECT DISTINCT
                         a.start_date AS date, 
-                        b.active_game,
+                        CASE WHEN b.active_game LIKE 'Smashy%' THEN 'Smashy Pinata' ELSE b.active_game END AS active_game,
                         COUNT(DISTINCT a.userid) AS New_users 
                        FROM prod_games.arcade.first_played_date a 
                        JOIN arcade_active_game b ON (a.userid = b.userid) AND (a.start_date = b.date) 
@@ -219,7 +219,7 @@ FROM (SELECT
                  JOIN (SELECT DISTINCT
                         a.start_date AS cohort_date, 
                         DATEADD(day,3,a.start_date) AS day3, 
-                        c.active_game,
+                        CASE WHEN c.active_game LIKE 'Smashy%' THEN 'Smashy Pinata' ELSE c.active_game END AS active_game,
                         COUNT(DISTINCT b.userid) AS day3players 
                        FROM prod_games.arcade.first_played_date a 
                        JOIN prod_games.arcade.apprunning b ON b.userid = a.userid AND TO_DATE(b.submit_time) = DATEADD(day,3,a.start_date)
@@ -235,7 +235,7 @@ FROM (SELECT
                     COALESCE(CAST(c.day14players AS NUMBER(38,6))/CAST(New_users AS NUMBER(38,6)),0) AS day14Perc -- Gets Day 14
                  FROM (SELECT DISTINCT
                         TO_DATE(a.submit_time) AS date, 
-                        c.active_game,
+                        CASE WHEN c.active_game LIKE 'Smashy%' THEN 'Smashy Pinata' ELSE c.active_game END AS active_game,
                         COUNT(DISTINCT a.userid) AS DAU 
                        FROM prod_games.arcade.apprunning a 
                        JOIN arcade_active_game c ON (a.userid = c.userid) AND (a.submit_time::Date = c.date)
@@ -245,7 +245,7 @@ FROM (SELECT
                        GROUP BY 1,2) a 
                  JOIN (SELECT DISTINCT
                         a.start_date AS date, 
-                        b.active_game,
+                        CASE WHEN b.active_game LIKE 'Smashy%' THEN 'Smashy Pinata' ELSE b.active_game END AS active_game,
                         COUNT(DISTINCT a.userid) AS New_users 
                        FROM prod_games.arcade.first_played_date a 
                        JOIN arcade_active_game b ON (a.userid = b.userid) AND (a.start_date = b.date) 
@@ -256,7 +256,7 @@ FROM (SELECT
                  JOIN (SELECT DISTINCT
                         a.start_date AS cohort_date, 
                         DATEADD(day,14,a.start_date) AS day14, 
-                        c.active_game,
+                        CASE WHEN c.active_game LIKE 'Smashy%' THEN 'Smashy Pinata' ELSE c.active_game END AS active_game,
                         COUNT(DISTINCT b.userid) AS day14players 
                        FROM prod_games.arcade.first_played_date a 
                        JOIN prod_games.arcade.apprunning b ON b.userid = a.userid AND TO_DATE(b.submit_time) = DATEADD(day,14,a.start_date)
@@ -268,7 +268,7 @@ FROM (SELECT
       LEFT JOIN (SELECT 
                     'Arcade' AS game, 
                     start_date AS date, 
-                    active_game,
+                    CASE WHEN active_game LIKE 'Smashy%' THEN 'Smashy Pinata' ELSE active_game END AS active_game,
                     COUNT(DISTINCT a.userid) AS new_user -- Gets new user count
                  FROM prod_games.arcade.first_played_date a
                  JOIN arcade_active_game b ON (a.userid = b.userid) AND (a.start_date = b.date)
