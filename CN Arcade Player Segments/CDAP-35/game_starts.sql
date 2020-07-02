@@ -24,10 +24,15 @@ GROUP BY 1,2,3,4;
 -- Drops segment_gamestarts view
 DROP VIEW segment_gamestarts;
 
+-- Testing segment_gamestarts
+SELECT *
+FROM segment_gamestarts;
+
 -- Creates active_game_gamestarts
 CREATE VIEW active_game_gamestarts AS
 SELECT
-    a.submit_time::DATE AS date
+    'Arcade' AS game
+    ,a.submit_time::DATE AS date
     ,CASE WHEN b.active_game LIKE 'Smashy%' THEN 'Smashy Pinata' ELSE b.active_game END AS active_game
     ,a.platform
     ,COUNT(DISTINCT a.userid) AS users
@@ -40,7 +45,11 @@ AND a.userid IN (SELECT userid
                  FROM prod_games.arcade.FIRST_PLAYED_DATE 
                  WHERE START_DATE >= '3/4/2019')
 AND date >= '3/4/2019'
-GROUP BY 1,2,3;
+GROUP BY 1,2,3,4;
 
--- Drops active_game_gamestarts
+-- Drops active_game_gamestarts view
 DROP VIEW active_game_gamestarts;
+
+-- Testing active_game_gamestarts
+SELECT *
+FROM active_game_gamestarts;
