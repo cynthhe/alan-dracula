@@ -3,27 +3,37 @@ USE SCHEMA arcade;
 USE WAREHOUSE wh_default;
 
 -- Create capture view
-CREATE VIEW capture AS
+CREATE OR REPLACE VIEW capture AS
 SELECT DISTINCT 
-    acr_capture.userid||acr_capture.sessionid||acr_capture.submit_time AS id,
-    userid, 
-    sessionid, 
-    submit_time,
-    ts,
-    platform, 
-    city, 
-    country, 
-    appid,
-    debug_device,
-    user_agent,
-    play_userid,
-    play_userloggedin,
-    episode_name,
-    success
+    acr_capture.userid||acr_capture.sessionid||acr_capture.submit_time AS id
+    ,userid
+    ,sessionid
+    ,submit_time
+    ,ts
+    ,platform
+    ,city
+    ,country
+    ,type
+    ,appid
+    ,debug_device
+    ,sdk
+    ,user_agent
+    ,custom_params
+    ,original_filename
+    ,capture_id
+    ,capture_time
+    ,episode_name
+    ,play_userloggedin
+    ,success
+    ,figure_granted
 FROM acr_capture;
 
 -- Drop capture view
 DROP VIEW capture;
+
+-- Testing capture view
+SELECT *
+FROM capture;
 
 -- Create result view
 CREATE VIEW result AS
