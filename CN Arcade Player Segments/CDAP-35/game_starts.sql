@@ -3,7 +3,7 @@ USE SCHEMA arcade;
 USE warehouse wh_default;
 
 -- Creates segment_gamestarts view
-CREATE VIEW segment_gamestarts AS
+CREATE OR REPLACE VIEW segment_gamestarts AS
 SELECT
     a.submit_time::DATE AS date
     ,CASE WHEN a.game_name LIKE 'Smashy%' THEN 'Smashy Pinata' ELSE a.game_name END AS game_name
@@ -29,7 +29,7 @@ SELECT *
 FROM segment_gamestarts;
 
 -- Creates active_game_gamestarts
-CREATE VIEW active_game_gamestarts AS
+CREATE OR REPLACE VIEW active_game_gamestarts AS
 SELECT
     'Arcade' AS game
     ,a.submit_time::DATE AS date
