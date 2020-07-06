@@ -9,41 +9,41 @@ SELECT DISTINCT
         WHEN duration BETWEEN 4 AND 8 THEN 'Engaged'
         WHEN duration >= 8 THEN 'Ultra engaged'
         ELSE 'OTHERS'
-        END AS segment,
-    COUNT(1) AS num_users,
-    CONCAT(ROUND(((num_users / (SELECT COUNT(*) FROM apprunning)) * 100), 2), '%') AS "% of Total"
+        END AS segment
+    ,COUNT(1) AS num_users
+    ,CONCAT(ROUND(((num_users / (SELECT COUNT(*) FROM apprunning)) * 100), 2), '%') AS "% of Total"
 FROM arcade_perday
 GROUP BY segment
 ORDER BY num_users DESC;
 
 -- Creates arcade_perday view
-CREATE VIEW arcade_perday AS
+CREATE OR REPLACE VIEW arcade_perday AS
 SELECT DISTINCT 
-    userid, 
-    sessionid, 
-    date, 
-    is_new_session, 
-    session_index, 
-    duration
+    userid 
+    ,sessionid
+    ,date
+    ,is_new_session
+    ,session_index
+    ,duration
 FROM arcade_session;
 
 -- Drop arcade_perday view
 DROP VIEW arcade_perday;
 
--- Time in app per day view
+-- Testing arcade_perday view
 SELECT *
 FROM arcade_perday;
 
 -- Creates arcade_engagement_segments view
-CREATE VIEW arcade_engagement_segments AS
+CREATE OR REPLACE VIEW arcade_engagement_segments AS
 SELECT 
-    YEAR(date)||LPAD(MONTH(date),2,'0') as yearmonth,
-    userid,
-    ROUND(AVG(duration)) AS avg_time_per_day_this_month, 
-    CASE 
+    YEAR(date)||LPAD(MONTH(date),2,'0') as yearmonth
+    ,userid
+    ,ROUND(AVG(duration)) AS avg_time_per_day_this_month
+    ,CASE 
         WHEN avg_time_per_day_this_month BETWEEN 0 AND 3 THEN 'Not engaged'
         WHEN avg_time_per_day_this_month BETWEEN 4 AND 8 THEN 'Engaged'
-        WHEN avg_time_per_day_this_month >= 8 THEN 'Ultra engaged'
+        WHEN avg_time_per_day_this_month > 8 THEN 'Ultra engaged'
         ELSE 'OTHERS'
         END AS segment
 FROM arcade_perday
@@ -68,11 +68,11 @@ FROM arcade_perday
 WHERE userid = '8c9fa5100fa414d3bab22d66c5411bf8';
 
 -- Creates arcade_active_game view
-CREATE VIEW arcade_active_game AS
+CREATE OR REPLACE VIEW arcade_active_game AS
 SELECT 
-    apprunning.submit_time::DATE AS date, 
-    apprunning.userid, 
-    game_open.game_name
+    apprunning.submit_time::DATE AS date
+    ,apprunning.userid AS userid
+    ,game_open.game_name AS active_game
 FROM apprunning
 JOIN game_open ON (apprunning.userid = game_open.userid) AND (apprunning.submit_time = game_open.submit_time)
 AND game_open.submit_time::DATE BETWEEN DATEADD(DAY, -7, apprunning.submit_time::DATE) AND apprunning.submit_time::DATE;
@@ -85,6 +85,6 @@ SELECT *
 FROM arcade_active_game;
 
 SELECT 
-    MIN(date), 
-    MAX(date)
+    MIN(date)
+    ,MAX(date)
 FROM arcade_active_game;
