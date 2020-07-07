@@ -57,4 +57,4 @@ SELECT
 FROM prod_games.arcade.segment_acr;
 
 -- Grant LOOKER_READ role
-GRANT SELECT ON prod_games.arcade.segment_acr TO looker_read;
+GRANT SELECT ON prod_games.reporting.arcade_segment_acr TO looker_read;
