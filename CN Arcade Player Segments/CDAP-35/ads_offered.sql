@@ -42,6 +42,7 @@ SELECT *
 FROM segment_ads_offered;
 
 -- Creates active_game_ads_offered view
+CREATE VIEW active_game_ads_offered AS
 SELECT
     a.submit_time::DATE AS date
     ,a.userid
@@ -71,3 +72,10 @@ AND a.userid IN (SELECT userid
                FROM prod_games.arcade.FIRST_PLAYED_DATE 
                WHERE START_DATE >= '3/4/2019')
 GROUP BY 1,2,3,4,5,6,7,8,9;
+
+-- Drop active_game_ads_offered view
+DROP VIEW active_game_ads_offered;
+
+-- Testing active_game_ads_offered view
+SELECT *
+FROM active_game_ads_offered;
