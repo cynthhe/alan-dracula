@@ -32,17 +32,18 @@ DROP VIEW segment_acr;
 SELECT *
 FROM segment_acr;
 
-USE DATABASE prod_games;
-USE SCHEMA reporting;
-USE warehouse wh_default;
+-- Creates ARCADE_SEGMENT_ACR table
+CREATE TABLE ARCADE_SEGMENT_ACR AS
+SELECT *
+FROM segment_acr;
 
--- Create ARCADE_SEGMENT_ACR view for REPORTING schema
-CREATE OR REPLACE VIEW ARCADE_SEGMENT_ACR AS 
-SELECT
-    userid
-    ,segment
+-- Creates active_game_acr view
+CREATE OR REPLACE VIEW active_game_acr AS
+SELECT DISTINCT
+    a.userid
+    ,b.active_game
     ,sessionid
-    ,submit_time
+    ,a.submit_time
     ,ts
     ,platform
     ,city
@@ -54,7 +55,21 @@ SELECT
     ,figure_granted
     ,success
     ,code
-FROM prod_games.arcade.segment_acr;
+FROM prod_games.arcade.ACR a
+JOIN prod_games.arcade.arcade_active_game b ON (a.userid = b.userid) AND (a.submit_time::DATE = b.date)
+WHERE a.country LIKE 'US'
+AND a.submit_time >= '3/4/2019';
 
--- Grant LOOKER_READ role
-GRANT SELECT ON prod_games.reporting.arcade_segment_acr TO looker_read;
+-- Testing active_game_acr view
+SELECT DISTINCT 
+    code 
+    ,success
+    ,COUNT(*)
+FROM active_game_acr
+GROUP BY 1,2
+ORDER BY code;
+
+-- Creates ARCADE_ACTIVE_GAME_ACR table
+CREATE TABLE ARCADE_ACTIVE_GAME_ACR AS
+SELECT *
+FROM prod_games.arcade.active_game_acr;
