@@ -3,7 +3,7 @@ USE SCHEMA arcade;
 USE warehouse wh_default;
 
 -- Creates segment_ads_offered view
-CREATE VIEW segment_ads_offered AS
+CREATE OR REPLACE VIEW segment_ads_offered AS
 SELECT
     a.submit_time::DATE AS date
     ,a.userid
@@ -41,8 +41,13 @@ DROP VIEW segment_ads_offered;
 SELECT *
 FROM segment_ads_offered;
 
+-- Creates ARCADE_SEGMENT_ADS_OFFERED table
+CREATE TABLE ARCADE_SEGMENT_ADS_OFFERED AS
+SELECT *
+FROM prod_games.arcade.segment_ads_offered;
+
 -- Creates active_game_ads_offered view
-CREATE VIEW active_game_ads_offered AS
+CREATE OR REPLACE VIEW active_game_ads_offered AS
 SELECT
     a.submit_time::DATE AS date
     ,a.userid
@@ -79,3 +84,8 @@ DROP VIEW active_game_ads_offered;
 -- Testing active_game_ads_offered view
 SELECT *
 FROM active_game_ads_offered;
+
+-- Creates ARCADE_ACTIVE_GAME_ADS_OFFERED table
+CREATE TABLE ARCADE_ACTIVE_GAME_ADS_OFFERED AS
+SELECT *
+FROM prod_games.arcade.active_game_ads_offered;
