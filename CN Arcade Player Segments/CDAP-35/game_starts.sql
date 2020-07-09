@@ -24,7 +24,7 @@ GROUP BY 1,2,3,4;
 -- Drops segment_gamestarts view
 DROP VIEW segment_gamestarts;
 
--- Testing segment_gamestarts
+-- Testing segment_gamestarts view
 SELECT *
 FROM segment_gamestarts;
 
@@ -55,7 +55,7 @@ GROUP BY 1,2,3,4,5;
 -- Drops active_game_gamestarts view
 DROP VIEW active_game_gamestarts;
 
--- Testing active_game_gamestarts
+-- Testing active_game_gamestarts view
 SELECT *
 FROM active_game_gamestarts;
 
