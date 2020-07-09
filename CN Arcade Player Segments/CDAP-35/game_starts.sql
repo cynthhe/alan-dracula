@@ -28,7 +28,12 @@ DROP VIEW segment_gamestarts;
 SELECT *
 FROM segment_gamestarts;
 
--- Creates active_game_gamestarts
+-- Creates ARCADE_SEGMENT_GAMESTARTS table
+CREATE TABLE ARCADE_SEGMENT_GAMESTARTS AS
+SELECT *
+FROM prod_games.arcade.segment_gamestarts;
+
+-- Creates active_game_gamestarts view
 CREATE OR REPLACE VIEW active_game_gamestarts AS
 SELECT 
     'Arcade' AS game 
@@ -53,3 +58,8 @@ DROP VIEW active_game_gamestarts;
 -- Testing active_game_gamestarts
 SELECT *
 FROM active_game_gamestarts;
+
+-- Creates ARCADE_ACTIVE_GAME_GAMESTARTS table
+CREATE TABLE ARCADE_ACTIVE_GAME_GAMESTARTS AS
+SELECT *
+FROM prod_games.arcade.active_game_gamestarts;
