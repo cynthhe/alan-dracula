@@ -38,7 +38,7 @@ CREATE OR REPLACE VIEW active_game_gamestarts AS
 SELECT 
     'Arcade' AS game 
     ,a.submit_time::DATE AS date 
-    ,a.game_name as ad_game 
+    ,CASE WHEN a.game_name LIKE 'Smashy%' THEN 'Smashy Pinata' ELSE a.game_name END AS ad_game 
     ,CASE WHEN b.active_game LIKE 'Smashy%' THEN 'Smashy Pinata' ELSE b.active_game END AS active_game 
     ,a.platform 
     ,COUNT(DISTINCT a.userid) AS users 
@@ -63,3 +63,22 @@ FROM active_game_gamestarts;
 CREATE TABLE ARCADE_ACTIVE_GAME_GAMESTARTS AS
 SELECT *
 FROM prod_games.arcade.active_game_gamestarts;
+
+-- REPORTING schema
+USE DATABASE prod_games;
+USE SCHEMA reporting;
+USE warehouse wh_default;
+
+-- Creates reporting view: ARCADE_SEGMENT_GAMESTARTS_VIEW
+CREATE OR REPLACE VIEW ARCADE_SEGMENT_GAMESTARTS_VIEW AS
+SELECT *
+FROM ARCADE_SEGMENT_GAMESTARTS;
+
+-- Creates reporting view: ARCADE_ACTIVE_GAME_GAMESTARTS_VIEW
+CREATE OR REPLACE VIEW ARCADE_ACTIVE_GAME_GAMESTARTS_VIEW AS
+SELECT *
+FROM ARCADE_ACTIVE_GAME_GAMESTARTS;
+
+-- Looker permissions for reporting views
+GRANT SELECT ON prod_games.reporting.ARCADE_SEGMENT_GAMESTARTS_VIEW TO looker_read;
+GRANT SELECT ON prod_games.reporting.ARCADE_ACTIVE_GAME_GAMESTARTS_VIEW TO looker_read;
