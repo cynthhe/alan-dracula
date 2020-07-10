@@ -89,3 +89,22 @@ FROM active_game_ads_offered;
 CREATE TABLE ARCADE_ACTIVE_GAME_ADS_OFFERED AS
 SELECT *
 FROM prod_games.arcade.active_game_ads_offered;
+
+-- REPORTING schema
+USE DATABASE prod_games;
+USE SCHEMA reporting;
+USE warehouse wh_default;
+
+-- Creates reporting view: ARCADE_SEGMENT_ADS_OFFERED_VIEW
+CREATE OR REPLACE VIEW ARCADE_SEGMENT_ADS_OFFERED_VIEW AS
+SELECT *
+FROM ARCADE_SEGMENT_ADS_OFFERED;
+
+-- Creates reporting view: ARCADE_ACTIVE_GAME_ADS_OFFERED_VIEW
+CREATE OR REPLACE VIEW ARCADE_ACTIVE_GAME_ADS_OFFERED_VIEW AS
+SELECT *
+FROM ARCADE_ACTIVE_GAME_ADS_OFFERED;
+
+-- Looker permissions for reporting views
+GRANT SELECT ON prod_games.reporting.ARCADE_SEGMENT_ADS_OFFERED_VIEW TO looker_read;
+GRANT SELECT ON prod_games.reporting.ARCADE_ACTIVE_GAME_ADS_OFFERED_VIEW TO looker_read;
