@@ -61,6 +61,9 @@ WHERE a.country LIKE 'US'
 AND a.submit_time >= '3/4/2019';
 
 -- Testing active_game_acr view
+SELECT *
+FROM active_game_acr;
+
 SELECT DISTINCT 
     code 
     ,success
@@ -73,3 +76,22 @@ ORDER BY code;
 CREATE TABLE ARCADE_ACTIVE_GAME_ACR AS
 SELECT *
 FROM prod_games.arcade.active_game_acr;
+
+-- REPORTING schema
+USE DATABASE prod_games;
+USE SCHEMA reporting;
+USE warehouse wh_default;
+
+-- Creates reporting view: ARCADE_SEGMENT_ACR_VIEW
+CREATE OR REPLACE VIEW ARCADE_SEGMENT_ACR_VIEW AS
+SELECT *
+FROM ARCADE_SEGMENT_ACR;
+
+-- Creates reporting view: ARCADE_ACTIVE_GAME_ACR_VIEW
+CREATE OR REPLACE VIEW ARCADE_ACTIVE_GAME_ACR_VIEW AS
+SELECT *
+FROM ARCADE_ACTIVE_GAME_ACR;
+
+-- Looker permissions for reporting views
+GRANT SELECT ON prod_games.reporting.ARCADE_SEGMENT_ACR_VIEW TO looker_read;
+GRANT SELECT ON prod_games.reporting.ARCADE_ACTIVE_GAME_ACR_VIEW TO looker_read;
