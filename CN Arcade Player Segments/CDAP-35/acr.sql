@@ -20,8 +20,8 @@ SELECT
     ,figure_granted
     ,success
     ,code
-FROM ACR a
-JOIN arcade_engagement_segments b ON (a.userid = b.userid) AND ((YEAR(a.submit_time)||LPAD(MONTH(a.submit_time),2,'0')) = b.yearmonth)
+FROM prod_games.arcade.ACR a
+JOIN prod_games.arcade.arcade_engagement_segments b ON (a.userid = b.userid) AND ((YEAR(a.submit_time)||LPAD(MONTH(a.submit_time),2,'0')) = b.yearmonth)
 WHERE a.country LIKE 'US'
 AND a.submit_time >= '3/4/2019';
 
@@ -41,7 +41,7 @@ FROM segment_acr;
 CREATE OR REPLACE VIEW active_game_acr AS
 SELECT DISTINCT
     a.userid
-    ,b.active_game
+    ,CASE WHEN b.active_game LIKE 'Smashy%' THEN 'Smashy Pinata' ELSE b.active_game END AS active_game
     ,sessionid
     ,a.submit_time
     ,ts
