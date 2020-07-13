@@ -13,7 +13,7 @@ SELECT
     ,COUNT(DISTINCT a.sessionid) AS sessions
     ,COUNT(DISTINCT a.game_session_id) AS game_starts
 FROM prod_games.arcade.game_open a
-JOIN arcade_engagement_segments b ON (a.userid = b.userid) AND ((YEAR(a.submit_time)||LPAD(MONTH(a.submit_time),2,'0')) = b.yearmonth)
+JOIN prod_games.arcade.arcade_engagement_segments b ON (a.userid = b.userid) AND ((YEAR(a.submit_time)||LPAD(MONTH(a.submit_time),2,'0')) = b.yearmonth)
 WHERE a.country LIKE 'US' 
 AND a.userid IN (SELECT userid 
                  FROM prod_games.arcade.FIRST_PLAYED_DATE 
@@ -45,7 +45,7 @@ SELECT
     ,COUNT(DISTINCT a.sessionid) AS sessions 
     ,COUNT(DISTINCT a.game_session_id) AS game_starts 
 FROM prod_games.arcade.game_open a 
-JOIN arcade_active_game b ON (a.userid = b.userid) AND (a.submit_time::DATE = b.date) 
+JOIN prod_games.arcade.arcade_active_game b ON (a.userid = b.userid) AND (a.submit_time::DATE = b.date) 
 WHERE a.country LIKE 'US' AND a.userid IN (SELECT userid 
                                            FROM prod_games.arcade.FIRST_PLAYED_DATE 
                                            WHERE START_DATE >= '3/4/2019') 
