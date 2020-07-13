@@ -27,7 +27,7 @@ LEFT JOIN (SELECT
                                                   FROM prod_games.arcade.FIRST_PLAYED_DATE 
                                                   WHERE START_DATE >= '3/4/2019') 
            GROUP BY 1,2) b ON (b.date = a.submit_time::DATE) AND (b.platform = a.platform)
-JOIN arcade_engagement_segments c ON (a.userid = c.userid) AND ((YEAR(a.submit_time)||LPAD(MONTH(a.submit_time),2,'0')) = c.yearmonth)
+JOIN prod_games.arcade.arcade_engagement_segments c ON (a.userid = c.userid) AND ((YEAR(a.submit_time)||LPAD(MONTH(a.submit_time),2,'0')) = c.yearmonth)
 WHERE a.country LIKE 'US' AND a.ad_offered LIKE 'True'
 AND a.userid IN (SELECT userid 
                FROM prod_games.arcade.FIRST_PLAYED_DATE 
@@ -71,7 +71,7 @@ LEFT JOIN (SELECT
                                                   FROM prod_games.arcade.FIRST_PLAYED_DATE 
                                                   WHERE START_DATE >= '3/4/2019') 
            GROUP BY 1,2) b ON (b.date = a.submit_time::DATE) AND (b.platform = a.platform)
-JOIN arcade_active_game c ON (a.userid = c.userid) AND (a.submit_time::DATE = c.date)
+JOIN prod_games.arcade.arcade_active_game c ON (a.userid = c.userid) AND (a.submit_time::DATE = c.date)
 WHERE a.country LIKE 'US' AND a.ad_offered LIKE 'True'
 AND a.userid IN (SELECT userid 
                FROM prod_games.arcade.FIRST_PLAYED_DATE 
