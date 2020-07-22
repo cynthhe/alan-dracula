@@ -6,7 +6,7 @@ USE warehouse wh_default;
 CREATE OR REPLACE VIEW ARCADE_SEGMENT_WOW AS
 SELECT
     year||'-'||week as yearweek -- creates a week field that takes the year into account so it doesn't break as you transition from year to year.
-    ,RANK() OVER (PARTITION BY platform ORDER BY year,week ASC) AS rank
+    ,RANK() OVER (PARTITION BY platform ORDER BY year,week,LEN(week) ASC) AS rank
     ,segment
     ,platform
     ,week0
