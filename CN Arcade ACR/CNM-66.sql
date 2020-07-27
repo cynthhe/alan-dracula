@@ -9,24 +9,19 @@ SELECT DISTINCT
     ,userid
     ,sessionid
     ,submit_time
-    ,ts
     ,platform
-    ,city
-    ,country
-    ,type
-    ,appid
-    ,debug_device
-    ,sdk
-    ,user_agent
-    ,custom_params
-    ,original_filename
-    ,capture_id
     ,capture_time
     ,episode_name
     ,play_userloggedin
     ,success
     ,figure_granted
-FROM acr_capture;
+FROM prod_games.arcade.acr_capture
+WHERE userid IN (SELECT userid 
+                 FROM prod_games.arcade.apprunning 
+                 WHERE country LIKE 'US')
+AND userid IN (SELECT userid 
+               FROM prod_games.arcade.FIRST_PLAYED_DATE 
+               WHERE START_DATE >= '3/4/2019');
 
 -- Drop capture view
 DROP VIEW capture;
@@ -61,37 +56,24 @@ ORDER BY code;
 
 -- Create ACR view
 CREATE OR REPLACE VIEW ACR AS
-SELECT DISTINCT
-    userid
-    ,sessionid
-    ,submit_time
-    ,ts
-    ,platform
-    ,city
-    ,country
-    ,type
-    ,appid
-    ,debug_device
-    ,sdk
-    ,user_agent
-    ,custom_params
-    ,original_filename
-    ,capture_id
-    ,capture_time
+SELECT
+    submit_time::DATE AS date
     ,episode_name
-    ,play_userloggedin
     ,figure_granted
+    ,play_userloggedin
+    ,platform
     ,CASE 
         WHEN code = 0 OR code IS NULL THEN 'True'
         ELSE 'False'
         END AS success
     ,code
-FROM capture
-LEFT JOIN result ON (capture.id = result.id)
-WHERE NOT (episode_name IS NULL AND code = 0);
-
--- Drop ACR view
-DROP VIEW ACR;
+    ,COUNT(DISTINCT userid) AS users
+    ,COUNT(DISTINCT sessionid) AS sessions
+    ,COUNT(userid) AS times_captured
+FROM prod_games.arcade.capture
+LEFT JOIN prod_games.arcade.result ON (capture.id = result.id)
+WHERE NOT (episode_name IS NULL AND code = 0)
+GROUP BY 1,2,3,4,5,6,7;
 
 -- Testing ACR view
 SELECT *
