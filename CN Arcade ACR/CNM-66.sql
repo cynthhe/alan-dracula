@@ -125,3 +125,16 @@ SELECT DISTINCT
 FROM ACR
 WHERE userid = 'd98fb8c5475f645df88dc8c2186adae3'
 AND DATE(submit_time) = '2020-05-28';
+
+-- REPORTING schema
+USE DATABASE prod_games;
+USE SCHEMA reporting;
+USE warehouse wh_default;
+
+-- Creates reporting view: ARCADE_SEGMENT_ACR_VIEW
+CREATE OR REPLACE VIEW ARCADE_ACR AS
+SELECT *
+FROM prod_games.arcade.ACR;
+
+-- Looker permissions for reporting views
+GRANT SELECT ON prod_games.reporting.ARCADE_ACR TO looker_read;
