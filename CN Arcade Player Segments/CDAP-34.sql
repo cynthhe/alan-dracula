@@ -7,7 +7,7 @@ SELECT DISTINCT
     CASE
         WHEN duration BETWEEN 0 AND 4 THEN 'Not engaged'
         WHEN duration BETWEEN 4 AND 8 THEN 'Engaged'
-        WHEN duration >= 8 THEN 'Ultra engaged'
+        WHEN duration > 8 THEN 'Ultra engaged'
         ELSE 'OTHERS'
         END AS segment
     ,COUNT(1) AS num_users
