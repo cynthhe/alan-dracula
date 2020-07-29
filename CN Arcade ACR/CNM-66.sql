@@ -13,6 +13,8 @@ SELECT DISTINCT
     ,capture_time
     ,episode_name
     ,play_userloggedin
+    ,city
+    ,country
     ,success
     ,figure_granted
 FROM prod_games.arcade.acr_capture
@@ -57,23 +59,22 @@ ORDER BY code;
 -- Create ACR view
 CREATE OR REPLACE VIEW ACR AS
 SELECT
-    submit_time::DATE AS date
+    userid
+    ,submit_time
     ,episode_name
     ,figure_granted
     ,play_userloggedin
     ,platform
+    ,city
+    ,country
     ,CASE 
         WHEN code = 0 OR code IS NULL THEN 'True'
         ELSE 'False'
         END AS success
     ,code
-    ,COUNT(DISTINCT userid) AS users
-    ,COUNT(DISTINCT sessionid) AS sessions
-    ,COUNT(userid) AS times_captured
 FROM prod_games.arcade.capture
 LEFT JOIN prod_games.arcade.result ON (capture.id = result.id)
-WHERE NOT (episode_name IS NULL AND code = 0)
-GROUP BY 1,2,3,4,5,6,7;
+WHERE NOT (episode_name IS NULL AND code = 0);
 
 -- Testing ACR view
 SELECT *
