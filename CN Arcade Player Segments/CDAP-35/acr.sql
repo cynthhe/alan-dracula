@@ -6,18 +6,12 @@ USE warehouse wh_default;
 CREATE OR REPLACE VIEW segment_acr AS
 SELECT
     a.userid
-    ,b.segment
-    ,sessionid
     ,a.submit_time
-    ,ts
-    ,platform
-    ,city
-    ,country
-    ,capture_id
-    ,capture_time
+    ,b.segment
     ,episode_name
-    ,play_userloggedin
     ,figure_granted
+    ,play_userloggedin
+    ,platform
     ,success
     ,code
 FROM prod_games.arcade.ACR a
@@ -85,7 +79,7 @@ USE warehouse wh_default;
 -- Creates reporting view: ARCADE_SEGMENT_ACR_VIEW
 CREATE OR REPLACE VIEW ARCADE_SEGMENT_ACR_VIEW AS
 SELECT *
-FROM ARCADE_SEGMENT_ACR;
+FROM prod_games.reporting.ARCADE_SEGMENT_ACR;
 
 -- Creates reporting view: ARCADE_ACTIVE_GAME_ACR_VIEW
 CREATE OR REPLACE VIEW ARCADE_ACTIVE_GAME_ACR_VIEW AS
