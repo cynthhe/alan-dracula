@@ -5,17 +5,15 @@ USE warehouse wh_default;
 -- Creates ARCADE_SEGMENT_WOW view
 CREATE OR REPLACE VIEW ARCADE_SEGMENT_WOW AS
 SELECT
-    year||'-'||week as yearweek -- creates a week field that takes the year into account so it doesn't break as you transition from year to year.
-    ,RANK() OVER (PARTITION BY platform ORDER BY year,week,LEN(week) ASC) AS rank
+    year||'-'||week AS yearweek -- creates a week field that takes the year into account so it doesn't break as you transition from year to year.
+    --,RANK() OVER (PARTITION BY segment ORDER BY year,week,LEN(week) ASC) AS rank
     ,segment
-    ,platform
     ,week0
     ,week1
     ,week1/week0 AS wow_retention
 FROM (SELECT
         YEAR(a.submit_time) AS year
         ,WEEK(a.submit_time) AS week
-        ,a.platform
         ,c.segment
         ,COUNT(DISTINCT a.userid) as week0
         ,COUNT(DISTINCT b.userid) as week1
@@ -27,7 +25,8 @@ FROM (SELECT
                        FROM prod_games.arcade.FIRST_PLAYED_DATE 
                        WHERE START_DATE >= '3/4/2019')
       AND a.country LIKE 'US'
-      GROUP BY 1,2,3,4);
+      GROUP BY 1,2,3)
+ORDER BY year,week,LEN(week) ASC;
 
 -- Creates ARCADE_ACTIVE_GAME_WOW view
 CREATE OR REPLACE VIEW ARCADE_ACTIVE_GAME_WOW AS
