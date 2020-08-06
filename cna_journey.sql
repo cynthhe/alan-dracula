@@ -1,113 +1,113 @@
-//1. player journey for arcade
-//- first players user journey
-//take a union on screen visit, game open, game starts, acr, shop
-//userid, timestamp, name of where they were, rank base on time stamp to get step,
-//only first session
-//
-//average actions for each step
-
+-- Segment on month they joined
 WITH cna_journey AS 
-(select
-userid ,sessionid
-from FIRST_PLAYED_DATE),
-journey_data as (
-select
-userid
-,sessionid
-,ts
-,SCREEN_NAME as location
-from "PROD_GAMES"."ARCADE"."SCREEN_VISIT" 
-where sessionid in (select
-userid ,sessionid
-from first_session)
-union all
-select
-userid
-,sessionid
-,ts
-,game_name as location
-from "PROD_GAMES"."ARCADE".",game_open" 
-where sessionid in (select
-userid ,sessionid
-from first_session))
-),
-user_level_journey as (
-select
-userid
-,sessionid
-,rank(on ts asc) as action_sequence
-,location
-from journey_data)
-select
-ranks
-,location
-,count(distinct userid) as users
-,count(distinct sessionid) as sessions
-from user_level_journey
-group 1,2;
-select * from "PROD_GAMES"."ARCADE"."GDB_GOTREWARD" limit 1000;
+(SELECT
+    userid
+    ,MIN(sessionid) AS sessionid
+    ,MIN(ts) AS ts
+ FROM prod_games.arcade.apprunning
+ GROUP BY 1)
+,journey_data AS
+(SELECT
+    userid
+    ,sessionid
+    ,ts
+    ,location
+    ,segment
+    ,RANK() OVER (PARTITION BY sessionid ORDER BY ts ASC) AS action_sequence
+ FROM (SELECT
+        a.userid
+        ,a.sessionid
+        ,a.ts
+        ,a.screen_name AS location
+        ,b.segment
+       FROM prod_games.arcade.screen_visit a -- screen visit, includes shop
+       JOIN prod_games.arcade.engagement_segments b
+       ON (a.userid = b.userid) AND ((YEAR(a.ts)||LPAD(MONTH(a.ts),2,'0')) = b.yearmonth)
+       WHERE a.sessionid IN (SELECT sessionid
+                             FROM cna_journey
+                             GROUP BY 1)
+       AND a.ts IN (SELECT ts
+                    FROM cna_journey
+                    GROUP BY 1)
+       GROUP BY 1,2,3,4,5
+       UNION ALL
+       SELECT
+        a.userid
+        ,a.sessionid
+        ,a.ts
+        ,CASE WHEN a.game_name LIKE 'Smashy%' THEN 'Smashy Pinata' ELSE a.game_name END AS location
+        ,b.segment
+       FROM prod_games.arcade.game_open a -- game open
+       JOIN prod_games.arcade.engagement_segments b
+       ON (a.userid = b.userid) AND ((YEAR(a.ts)||LPAD(MONTH(a.ts),2,'0')) = b.yearmonth)
+       WHERE a.sessionid IN (SELECT sessionid
+                          FROM cna_journey
+                          GROUP BY 1)
+       AND a.ts IN (SELECT ts
+                    FROM cna_journey
+                    GROUP BY 1)
+       GROUP BY 1,2,3,4,5
+       UNION ALL
+       SELECT
+        a.userid
+        ,a.sessionid
+        ,a.ts
+        ,CASE WHEN a.game_name LIKE 'Smashy%' THEN 'Smashy Pinata' ELSE a.game_name END AS location
+        ,b.segment
+       FROM prod_games.arcade.game_start a -- game start
+       JOIN prod_games.arcade.engagement_segments b
+       ON (a.userid = b.userid) AND ((YEAR(a.ts)||LPAD(MONTH(a.ts),2,'0')) = b.yearmonth)
+       WHERE a.sessionid IN (SELECT sessionid
+                           FROM cna_journey
+                           GROUP BY 1)
+       AND a.ts IN (SELECT ts
+                    FROM cna_journey
+                    GROUP BY 1)
+       GROUP BY 1,2,3,4,5
+       UNION ALL
+       SELECT
+        a.userid
+        ,a.sessionid
+        ,a.ts
+        ,'ACR' AS location
+        ,b.segment
+       FROM prod_games.arcade.ACR a -- ACR
+       JOIN prod_games.arcade.engagement_segments b
+       ON (a.userid = b.userid) AND ((YEAR(a.ts)||LPAD(MONTH(a.ts),2,'0')) = b.yearmonth)
+       WHERE a.sessionid IN (SELECT sessionid
+                           FROM cna_journey
+                           GROUP BY 1)
+       AND a.ts IN (SELECT ts
+                    FROM cna_journey
+                    GROUP BY 1)
+       GROUP BY 1,2,3,4,5
+       UNION ALL
+       SELECT
+        a.userid
+        ,a.sessionid
+        ,a.ts
+        ,a.stunt_name AS location
+        ,b.segment
+       FROM prod_games.arcade.stunt_open a -- stunts
+       JOIN prod_games.arcade.engagement_segments b
+       ON (a.userid = b.userid) AND ((YEAR(a.ts)||LPAD(MONTH(a.ts),2,'0')) = b.yearmonth)
+       WHERE a.sessionid IN (SELECT sessionid
+                             FROM cna_journey
+                             GROUP BY 1)
+       AND a.ts IN (SELECT ts
+                    FROM cna_journey
+                    GROUP BY 1)
+       GROUP BY 1,2,3,4,5)
+ GROUP BY 1,2,3,4,5)
+ SELECT
+    action_sequence
+    ,location
+    ,segment
+    ,COUNT(DISTINCT userid) AS users
+FROM journey_data
+GROUP BY 1,2,3
+HAVING users >= 50
+ORDER BY action_sequence ASC;
 
-//WITH ways_to_collect_users AS
-//    (SELECT
-//        ts AS playtime
-//        ,sessionid
-//        ,userid
-//     FROM stunt_open
-//     WHERE stunt_name = 'Ways to Collect Stunt'
-//     AND country = 'US'
-//     AND submit_time::date >= '7/6/2020')
-//,journey_data AS
-//(SELECT
-//    userid
-//    ,ts
-//    ,sessionid
-//    ,location
-//    ,Destination
-//    ,RANK() OVER (PARTITION BY sessionid ORDER BY ts Asc) as journey_location
-//FROM (SELECT
-//        ts
-//        ,sessionid
-//        ,userid
-//        ,EPISODE_NAME AS Location
-//        ,'Collect' AS Destination
-//      FROM ACR
-//      WHERE userid IN (SELECT userid 
-//                       FROM ways_to_collect_users 
-//                       GROUP BY 1)
-//      GROUP BY 1,2,3,4,5
-//      UNION ALL
-//      SELECT
-//        ts
-//        ,sessionid
-//        ,userid
-//        ,game_name AS Location
-//        ,'Play' AS Destination
-//      FROM game_open
-//      WHERE userid IN (SELECT userid 
-//                       FROM ways_to_collect_users 
-//                       GROUP BY 1)
-//      AND game_name LIKE 'Squad Goals'
-//      GROUP BY 1,2,3,4,5
-//      UNION ALL
-//      SELECT
-//        ts
-//        ,sessionid
-//        ,userid
-//        ,screen_name AS Location
-//        ,'Shop' AS Destination
-//      FROM SCREEN_VISIT
-//      WHERE userid IN (SELECT userid 
-//                       FROM ways_to_collect_users 
-//                       GROUP BY 1)
-//      AND Location = '/shop'
-//      GROUP BY 1,2,3,4,5)
-//GROUP BY 1,2,3,4,5)
-//SELECT
-//    userid
-//    ,sessionid
-//    ,ts::DATE AS action_date
-//    ,journey_location
-//    ,location
-//    ,Destination
-//FROM journey_data
-//GROUP BY 1,2,3,4,5,6;
+-- I need stunt
+--Segment on month they joined, segmented by people who ACR vs Don’t and Segmented by total # of months they have been in arcade (so have they stuck around)
