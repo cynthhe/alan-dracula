@@ -20,7 +20,7 @@ WITH ways_to_collect_users AS
     ,sessionid
     ,location
     ,Destination
-    ,RANK() OVER (PARTITION BY sessionid ORDER BY ts Asc) as journey_location
+    ,RANK() OVER (PARTITION BY sessionid ORDER BY ts ASC) AS journey_location
 FROM (SELECT
         ts
         ,sessionid
