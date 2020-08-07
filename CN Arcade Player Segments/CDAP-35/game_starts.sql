@@ -2,7 +2,7 @@ USE DATABASE prod_games;
 USE SCHEMA arcade;
 USE warehouse wh_default;
 
--- Creates segment_gamestarts view
+-- Create SEGMENT_GAMESTARTS view
 CREATE OR REPLACE VIEW segment_gamestarts AS
 SELECT
     a.submit_time::DATE AS date
@@ -21,19 +21,7 @@ AND a.userid IN (SELECT userid
 AND date >= '3/4/2019'
 GROUP BY 1,2,3,4;
 
--- Drops segment_gamestarts view
-DROP VIEW segment_gamestarts;
-
--- Testing segment_gamestarts view
-SELECT *
-FROM segment_gamestarts;
-
--- Creates ARCADE_SEGMENT_GAMESTARTS table
-CREATE TABLE ARCADE_SEGMENT_GAMESTARTS AS
-SELECT *
-FROM prod_games.arcade.segment_gamestarts;
-
--- Creates active_game_gamestarts view
+-- Create ACTIVE_GAME_GAMESTARTS view
 CREATE OR REPLACE VIEW active_game_gamestarts AS
 SELECT 
     'Arcade' AS game 
@@ -52,29 +40,17 @@ WHERE a.country LIKE 'US' AND a.userid IN (SELECT userid
 AND date >= '3/4/2019'
 GROUP BY 1,2,3,4,5;
 
--- Drops active_game_gamestarts view
-DROP VIEW active_game_gamestarts;
-
--- Testing active_game_gamestarts view
-SELECT *
-FROM active_game_gamestarts;
-
--- Creates ARCADE_ACTIVE_GAME_GAMESTARTS table
-CREATE TABLE ARCADE_ACTIVE_GAME_GAMESTARTS AS
-SELECT *
-FROM prod_games.arcade.active_game_gamestarts;
-
 -- REPORTING schema
 USE DATABASE prod_games;
 USE SCHEMA reporting;
 USE warehouse wh_default;
 
--- Creates reporting view: ARCADE_SEGMENT_GAMESTARTS_VIEW
+-- Create reporting view: ARCADE_SEGMENT_GAMESTARTS_VIEW
 CREATE OR REPLACE VIEW ARCADE_SEGMENT_GAMESTARTS_VIEW AS
 SELECT *
 FROM ARCADE_SEGMENT_GAMESTARTS;
 
--- Creates reporting view: ARCADE_ACTIVE_GAME_GAMESTARTS_VIEW
+-- Create reporting view: ARCADE_ACTIVE_GAME_GAMESTARTS_VIEW
 CREATE OR REPLACE VIEW ARCADE_ACTIVE_GAME_GAMESTARTS_VIEW AS
 SELECT *
 FROM ARCADE_ACTIVE_GAME_GAMESTARTS;
