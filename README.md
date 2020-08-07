@@ -2,24 +2,23 @@
 This is a personal repo for work.
 ## Projects :bar_chart:
 ###### CN Arcade ACR
-- **CNM-66**: ACR Success vs. Failure
+- [**CNM-66**](https://github.com/cynthhe/cartoon-network/blob/master/CN%20Arcade%20ACR/CNM-66.sql): ACR Success vs. Failure
   - CAPTURE view
   - RESULT view
   - ACR view
 ###### CN Arcade Player Segments
-- **CDAP-33**: Standard deviation calculations
+- [**CDAP-33**](https://github.com/cynthhe/cartoon-network/blob/master/CN%20Arcade%20Player%20Segments/CDAP-33.sql): Standard deviation calculations
   - ARCADESESSIONS view
   - ARCADEDURATIONS view
-- **CDAP-34**: Segmenting players
-  - Creation of *arcade_perday* view
-  - Creation of *arcade_engagement_segments* view
-  - Creation of *arcade_active_game* view
-- **CDAP-35**: Retention SQL reporting
-  - Creation of *arcade_retention* view
-  - Creation of *arcade_pergame_retention* view
-  - Creation of *segment_gamestarts* view and *active_game_gamestarts* view
-  - Creation of *segment_ads_offered* view and *active_game_ads_offered* view
-  - Creation of *segment_acr* view
-- **CDAP-36**: Looker reporting
-  - [Segment Player Analytics dashboard](https://looker.turner.com/dashboards/5812?Segment=Not%20engaged&filter_config=%7B%22Segment%22:%5B%7B%22type%22:%22%3D%22,%22values%22:%5B%7B%22constant%22:%22Not%20engaged%22%7D,%7B%7D%5D,%22id%22:2%7D%5D%7D)
-  - [Active Game Player Analytics dashboard](https://looker.turner.com/dashboards/5827?Active%20Game=Squad%20Goals&filter_config=%7B%22Active%20Game%22:%5B%7B%22type%22:%22%3D%22,%22values%22:%5B%7B%22constant%22:%22Squad%20Goals%22%7D,%7B%7D%5D,%22id%22:2%7D%5D%7D)
+- [**CDAP-34**](https://github.com/cynthhe/cartoon-network/blob/master/CN%20Arcade%20Player%20Segments/CDAP-34.sql): Segmenting players
+  - ARCADE_PERDAY view
+  - ARCADE_ENGAGEMENT_SEGMENTS view
+  - ARCADE_ACTIVE_GAME view
+- [**CDAP-35**](https://github.com/cynthhe/cartoon-network/tree/master/CN%20Arcade%20Player%20Segments/CDAP-35): Retention SQL reporting
+  - [ARCADE_RETENTION view](https://github.com/cynthhe/cartoon-network/blob/master/CN%20Arcade%20Player%20Segments/CDAP-35/segment_retention.sql)
+  - [SEGMENT_GAMESTARTS view | ACTIVE_GAME_GAMESTARTS view](https://github.com/cynthhe/cartoon-network/blob/master/CN%20Arcade%20Player%20Segments/CDAP-35/game_starts.sql)
+  - [SEGMENT_ADS_OFFERED view](https://github.com/cynthhe/cartoon-network/blob/master/CN%20Arcade%20Player%20Segments/CDAP-35/ads_offered.sql)
+  - [SEGMENT_ACR view](https://github.com/cynthhe/cartoon-network/blob/master/CN%20Arcade%20Player%20Segments/CDAP-35/acr.sql)
+  - [SEGMENT_TIME_IN_GAME view | ACTIVE_GAME_TIME_IN_GAME view](https://github.com/cynthhe/cartoon-network/blob/master/CN%20Arcade%20Player%20Segments/CDAP-35/time_in_game.sql)
+  - [SEGMENT_FIGURE_SHOP view](https://github.com/cynthhe/cartoon-network/blob/master/CN%20Arcade%20Player%20Segments/CDAP-35/figure_shop.sql)
+  - [ARCADE_SEGMENT_WOW view](https://github.com/cynthhe/cartoon-network/blob/master/CN%20Arcade%20Player%20Segments/CDAP-35/wow_retention.sql)
