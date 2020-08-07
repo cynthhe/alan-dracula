@@ -2,7 +2,7 @@ USE DATABASE prod_games;
 USE SCHEMA arcade;
 USE warehouse wh_default;
 
--- Create arcade_retention view
+-- Create ARCADE_RETENTION view
 CREATE OR REPLACE VIEW arcade_retention AS
 SELECT 
     Game
@@ -206,10 +206,3 @@ FROM (SELECT
                                                         WHERE START_DATE >= '3/4/2019') 
                  GROUP BY 1,2,3) AS h ON (a.game = h.game) AND (a.date = h.date) AND (a.segment = h.segment)
      );
-     
--- Drop arcade_retention view
-DROP VIEW arcade_retention;
-
--- Testing arcade_retention view
-SELECT *
-FROM arcade_retention;
