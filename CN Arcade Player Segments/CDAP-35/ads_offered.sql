@@ -39,10 +39,10 @@ USE DATABASE prod_games;
 USE SCHEMA reporting;
 USE warehouse wh_default;
 
--- Creates reporting view: ARCADE_SEGMENT_ADS_OFFERED_VIEW
+-- Create reporting view: ARCADE_SEGMENT_ADS_OFFERED_VIEW
 CREATE OR REPLACE VIEW ARCADE_SEGMENT_ADS_OFFERED_VIEW AS
 SELECT *
 FROM ARCADE_SEGMENT_ADS_OFFERED;
 
--- Looker permissions for reporting views
+-- Looker permissions for reporting view
 GRANT SELECT ON prod_games.reporting.ARCADE_SEGMENT_ADS_OFFERED_VIEW TO looker_read;
