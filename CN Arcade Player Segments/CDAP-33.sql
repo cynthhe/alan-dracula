@@ -2,6 +2,7 @@ USE DATABASE prod_games;
 USE SCHEMA arcade;
 USE warehouse wh_default;
 
+-- Create ARCADESESSIONS view
 -- If a session is quiet for more than 20 minutes, add something to the session ID to make it a new session
 CREATE OR REPLACE VIEW arcadesessions AS
 WITH session_run AS (
@@ -47,14 +48,7 @@ SELECT
 FROM session_index
 ORDER BY userid, sessionid, submit_time;
 
--- Drop arcadesessions view
-DROP VIEW arcadesessions;
-
--- Testing arcadesessions view
-SELECT *
-FROM arcadesessions;
-
--- Create arcadedurations view
+-- Create ARCADEDURATIONS view
 CREATE OR REPLACE VIEW arcadedurations AS
 SELECT 
     DISTINCT userid || sessionid || submit_time  AS session_id
@@ -62,14 +56,7 @@ SELECT
 FROM apprunning
 GROUP BY 1;
 
--- Drop arcadedurations view
-DROP VIEW arcadedurations;
-
--- Testing arcadedurations view
-SELECT *
-FROM arcadedurations;
-
--- Create arcade_session view (arcadesessions and arcadedurations joined)
+-- Create ARCADE_SESSION view
 CREATE OR REPLACE VIEW arcade_session AS
 SELECT 
     userid
@@ -80,13 +67,6 @@ SELECT
     ,ROUND(time_in_app / 60) AS duration
 FROM arcadesessions
 JOIN arcadedurations ON (arcadesessions.session_id = arcadedurations.session_id);
-
--- Drop arcade_session view
-DROP VIEW arcade_session;
-
--- Testing arcade_session view
-SELECT *
-FROM arcade_session;
 
 -- Time in app per session
 SELECT DISTINCT 
