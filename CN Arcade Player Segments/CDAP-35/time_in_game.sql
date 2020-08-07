@@ -2,7 +2,7 @@ USE DATABASE prod_games;
 USE SCHEMA arcade;
 USE warehouse wh_default;
 
--- Creates segment_time_in_game view
+-- Create SEGMENT_TIME_IN_GAME view
 CREATE OR REPLACE VIEW segment_time_in_game AS
 SELECT
     date
@@ -15,12 +15,7 @@ SELECT
 FROM prod_games.arcade.TIME_IN_GAME a
 JOIN prod_games.arcade.arcade_engagement_segments b ON (a.userid = b.userid) AND ((YEAR(a.date)||LPAD(MONTH(a.date),2,'0')) = b.yearmonth);
 
--- Creates ARCADE_SEGMENT_TIME_IN_GAME table
-CREATE TABLE ARCADE_SEGMENT_TIME_IN_GAME AS
-SELECT *
-FROM prod_games.arcade.segment_time_in_game;
-
--- Creates active_game_time_in_game view
+-- Create ACTIVE_GAME_TIME_IN_GAME view
 CREATE OR REPLACE VIEW active_game_time_in_game AS
 SELECT
     a.date
@@ -33,22 +28,17 @@ SELECT
 FROM prod_games.arcade.TIME_IN_GAME a
 JOIN prod_games.arcade.arcade_active_game b ON (a.userid = b.userid) AND (a.date = b.date);
 
--- Creates ARCADE_ACTIVE_GAME_TIME_IN_GAME table
-CREATE TABLE ARCADE_ACTIVE_GAME_TIME_IN_GAME AS
-SELECT *
-FROM prod_games.arcade.active_game_time_in_game;
-
 -- REPORTING schema
 USE DATABASE prod_games;
 USE SCHEMA reporting;
 USE warehouse wh_default;
 
--- Creates reporting view: ARCADE_SEGMENT_TIME_IN_GAME_VIEW
+-- Create reporting view: ARCADE_SEGMENT_TIME_IN_GAME_VIEW
 CREATE OR REPLACE VIEW ARCADE_SEGMENT_TIME_IN_GAME_VIEW AS
 SELECT *
 FROM prod_games.arcade.ARCADE_SEGMENT_TIME_IN_GAME;
 
--- Creates reporting view: ARCADE_ACTIVE_GAME_TIME_IN_GAME_VIEW
+-- Create reporting view: ARCADE_ACTIVE_GAME_TIME_IN_GAME_VIEW
 CREATE OR REPLACE VIEW ARCADE_ACTIVE_GAME_TIME_IN_GAME_VIEW AS
 SELECT *
 FROM prod_games.arcade.ARCADE_ACTIVE_GAME_TIME_IN_GAME;
