@@ -8,8 +8,8 @@ This is a personal repo for work.
   - ACR view
 ###### CN Arcade Player Segments
 - **CDAP-33**: Standard deviation calculations
-  - Creation of *arcadesessions* view 
-  - Creation of *arcadedurations* view
+  - ARCADESESSIONS view
+  - ARCADEDURATIONS view
 - **CDAP-34**: Segmenting players
   - Creation of *arcade_perday* view
   - Creation of *arcade_engagement_segments* view
