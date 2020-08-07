@@ -2,8 +2,8 @@ USE DATABASE prod_games;
 USE SCHEMA arcade;
 USE warehouse wh_default;
 
--- Creates user_journey view
-CREATE OR REPLACE VIEW user_journey AS
+-- Create WAYS_TO_COLLECT_USER_JOURNEY view
+CREATE OR REPLACE VIEW ways_to_collect_user_journey AS
 WITH ways_to_collect_users AS
     (SELECT
         ts AS playtime
@@ -69,26 +69,15 @@ SELECT
 FROM journey_data
 GROUP BY 1,2,3,4,5,6;
 
--- Testing user_journey view
-SELECT *
-FROM user_journey;
-
-SELECT DISTINCT
-    Destination
-    ,COUNT(sessionid)
-    ,COUNT(userid)
-FROM user_journey
-GROUP BY 1;
-
 -- REPORTING schema
 USE DATABASE prod_games;
 USE SCHEMA reporting;
 USE warehouse wh_default;
 
--- Creates reporting view: ARCADE_USER_JOURNEY_VIEW
-CREATE OR REPLACE VIEW ARCADE_USER_JOURNEY_VIEW AS
+-- Create reporting view: WAYS_TO_COLLECT_USER_JOURNEY_VIEW
+CREATE OR REPLACE VIEW ways_to_collect_user_journey_view AS
 SELECT *
 FROM prod_games.arcade.user_journey;
 
--- Looker permissions for reporting views
-GRANT SELECT ON prod_games.reporting.ARCADE_USER_JOURNEY_VIEW TO looker_read;
+-- Looker permissions for reporting view
+GRANT SELECT ON prod_games.reporting.ways_to_collect_user_journey_view TO looker_read;
