@@ -3,9 +3,9 @@ This is a personal repo for work.
 ## Projects :bar_chart:
 ###### CN Arcade ACR
 - **CNM-66**: ACR Success vs. Failure
-  - Creation of *capture* view
-  - Creation of *result* view
-  - Creation of *ACR* view
+  - CAPTURE view
+  - RESULT view
+  - ACR view
 ###### CN Arcade Player Segments
 - **CDAP-33**: Standard deviation calculations
   - Creation of *arcadesessions* view 
