@@ -1,4 +1,5 @@
 -- Segment on month they joined
+CREATE VIEW segment_monthjoined_user_journey AS
 WITH cna_journey AS 
 (SELECT
     userid
@@ -109,5 +110,15 @@ GROUP BY 1,2,3
 HAVING users >= 50
 ORDER BY action_sequence ASC;
 
--- I need stunt
---Segment on month they joined, segmented by people who ACR vs Don’t and Segmented by total # of months they have been in arcade (so have they stuck around)
+-- REPORTING schema
+USE DATABASE prod_games;
+USE SCHEMA reporting;
+USE warehouse wh_default;
+
+-- Create reporting view: SEGMENT_MONTHJOINED_USER_JOURNEY_VIEW
+CREATE OR REPLACE VIEW segment_monthjoined_user_journey_view AS
+SELECT *
+FROM prod_games.arcade.segment_monthjoined_user_journey;
+
+-- Looker permissions for reporting view
+GRANT SELECT ON prod_games.reporting.segment_monthjoined_user_journey_view TO looker_read;
