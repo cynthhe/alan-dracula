@@ -1,5 +1,9 @@
+USE DATABASE prod_games;
+USE SCHEMA arcade;
+USE warehouse wh_default;
+
 -- Segment on month they joined
-CREATE VIEW segment_monthjoined_user_journey AS
+CREATE VIEW segment_firstplayer_user_journey AS
 WITH cna_journey AS 
 (SELECT
     userid
@@ -27,9 +31,6 @@ WITH cna_journey AS
        WHERE a.sessionid IN (SELECT sessionid
                              FROM cna_journey
                              GROUP BY 1)
-       AND a.ts IN (SELECT ts
-                    FROM cna_journey
-                    GROUP BY 1)
        GROUP BY 1,2,3,4,5
        UNION ALL
        SELECT
@@ -44,9 +45,6 @@ WITH cna_journey AS
        WHERE a.sessionid IN (SELECT sessionid
                           FROM cna_journey
                           GROUP BY 1)
-       AND a.ts IN (SELECT ts
-                    FROM cna_journey
-                    GROUP BY 1)
        GROUP BY 1,2,3,4,5
        UNION ALL
        SELECT
@@ -61,9 +59,6 @@ WITH cna_journey AS
        WHERE a.sessionid IN (SELECT sessionid
                            FROM cna_journey
                            GROUP BY 1)
-       AND a.ts IN (SELECT ts
-                    FROM cna_journey
-                    GROUP BY 1)
        GROUP BY 1,2,3,4,5
        UNION ALL
        SELECT
@@ -78,9 +73,6 @@ WITH cna_journey AS
        WHERE a.sessionid IN (SELECT sessionid
                            FROM cna_journey
                            GROUP BY 1)
-       AND a.ts IN (SELECT ts
-                    FROM cna_journey
-                    GROUP BY 1)
        GROUP BY 1,2,3,4,5
        UNION ALL
        SELECT
@@ -95,30 +87,34 @@ WITH cna_journey AS
        WHERE a.sessionid IN (SELECT sessionid
                              FROM cna_journey
                              GROUP BY 1)
-       AND a.ts IN (SELECT ts
-                    FROM cna_journey
-                    GROUP BY 1)
        GROUP BY 1,2,3,4,5)
  GROUP BY 1,2,3,4,5)
+,user_journey AS
+(SELECT
+    ts::DATE as date
+    ,userid
+    ,LISTAGG(location, ', ') within GROUP (ORDER BY action_sequence,ts ASC) AS journey
+    ,segment
+ FROM journey_data
+ WHERE action_sequence <= 20
+ GROUP BY date,userid,segment)
  SELECT
-    action_sequence
-    ,location
+    date
+    ,journey
     ,segment
     ,COUNT(DISTINCT userid) AS users
-FROM journey_data
-GROUP BY 1,2,3
-HAVING users >= 50
-ORDER BY action_sequence ASC;
-
+ FROM user_journey
+ GROUP BY 1,2,3;
+ 
 -- REPORTING schema
 USE DATABASE prod_games;
 USE SCHEMA reporting;
 USE warehouse wh_default;
 
 -- Create reporting view: SEGMENT_MONTHJOINED_USER_JOURNEY_VIEW
-CREATE OR REPLACE VIEW segment_monthjoined_user_journey_view AS
+CREATE OR REPLACE VIEW segment_firstplayer_user_journey_view AS
 SELECT *
-FROM prod_games.arcade.segment_monthjoined_user_journey;
+FROM prod_games.arcade.segment_firstplayer_user_journey;
 
 -- Looker permissions for reporting view
-GRANT SELECT ON prod_games.reporting.segment_monthjoined_user_journey_view TO looker_read;
+GRANT SELECT ON prod_games.reporting.segment_firstplayer_user_journey_view TO looker_read;
