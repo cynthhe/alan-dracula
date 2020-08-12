@@ -29,9 +29,6 @@ WITH cna_journey AS
        WHERE a.sessionid IN (SELECT sessionid
                              FROM cna_journey
                              GROUP BY 1)
-       AND a.ts IN (SELECT ts
-                    FROM cna_journey
-                    GROUP BY 1)
        GROUP BY 1,2,3,4,5
        UNION ALL
        SELECT
@@ -46,9 +43,6 @@ WITH cna_journey AS
        WHERE a.sessionid IN (SELECT sessionid
                           FROM cna_journey
                           GROUP BY 1)
-       AND a.ts IN (SELECT ts
-                    FROM cna_journey
-                    GROUP BY 1)
        GROUP BY 1,2,3,4,5
        UNION ALL
        SELECT
@@ -63,9 +57,6 @@ WITH cna_journey AS
        WHERE a.sessionid IN (SELECT sessionid
                            FROM cna_journey
                            GROUP BY 1)
-       AND a.ts IN (SELECT ts
-                    FROM cna_journey
-                    GROUP BY 1)
        GROUP BY 1,2,3,4,5
        UNION ALL
        SELECT
@@ -80,9 +71,6 @@ WITH cna_journey AS
        WHERE a.sessionid IN (SELECT sessionid
                            FROM cna_journey
                            GROUP BY 1)
-       AND a.ts IN (SELECT ts
-                    FROM cna_journey
-                    GROUP BY 1)
        GROUP BY 1,2,3,4,5
        UNION ALL
        SELECT
@@ -97,9 +85,6 @@ WITH cna_journey AS
        WHERE a.sessionid IN (SELECT sessionid
                              FROM cna_journey
                              GROUP BY 1)
-       AND a.ts IN (SELECT ts
-                    FROM cna_journey
-                    GROUP BY 1)
        GROUP BY 1,2,3,4,5)
  GROUP BY 1,2,3,4,5)
  SELECT
