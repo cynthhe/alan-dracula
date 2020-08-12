@@ -3,7 +3,7 @@ USE SCHEMA arcade;
 USE warehouse wh_default;
 
 -- Segment on month they joined
-CREATE VIEW segment_firstplayer_user_journey AS
+CREATE OR REPLACE VIEW segment_firstplayer_user_journey AS
 WITH cna_journey AS 
 (SELECT
     userid
