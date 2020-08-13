@@ -2,7 +2,7 @@ USE DATABASE prod_games;
 USE SCHEMA arcade;
 USE warehouse wh_default;
 
--- Segment on month they joined
+-- Create SEGMENT_FIRSTPLAYER_USER_JOURNEY view
 CREATE OR REPLACE VIEW segment_firstplayer_user_journey AS
 WITH cna_journey AS 
 (SELECT
@@ -111,7 +111,7 @@ USE DATABASE prod_games;
 USE SCHEMA reporting;
 USE warehouse wh_default;
 
--- Create reporting view: SEGMENT_MONTHJOINED_USER_JOURNEY_VIEW
+-- Create reporting view: SEGMENT_FIRSTPLAYER_USER_JOURNEY_VIEW
 CREATE OR REPLACE VIEW segment_firstplayer_user_journey_view AS
 SELECT *
 FROM prod_games.arcade.segment_firstplayer_user_journey;
