@@ -1,4 +1,8 @@
--- Segment by people who ACR vs. don’t
+USE DATABASE prod_games;
+USE SCHEMA arcade;
+USE warehouse wh_default;
+
+-- Create SEGMENT_ACR_USER_JOURNEY view
 CREATE OR REPLACE VIEW segment_acr_user_journey AS
 WITH cna_journey AS 
 (SELECT DISTINCT
@@ -130,7 +134,7 @@ USE DATABASE prod_games;
 USE SCHEMA reporting;
 USE warehouse wh_default;
 
--- Create reporting view: SEGMENT_MONTHJOINED_USER_JOURNEY_VIEW
+-- Create reporting view: SEGMENT_ACR_USER_JOURNEY_VIEW
 CREATE OR REPLACE VIEW segment_acr_user_journey_view AS
 SELECT *
 FROM prod_games.arcade.SEGMENT_ACR_USER_JOURNEY_TABLE;
