@@ -26,7 +26,7 @@ WITH cna_journey AS
         ,a.ts
         ,a.screen_name AS location
         ,b.segment
-        ,CASE WHEN a.sessionid = c.sessionid THEN 'Yes' ELSE 'No' END AS acr_or_not
+        ,CASE WHEN location LIKE '%collect%' THEN 'Yes' ELSE 'No' END AS acr_or_not
        FROM prod_games.arcade.screen_visit a -- screen visit, includes shop
        JOIN prod_games.arcade.engagement_segments b
        ON (a.userid = b.userid) AND ((YEAR(a.ts)||LPAD(MONTH(a.ts),2,'0')) = b.yearmonth)
@@ -43,7 +43,7 @@ WITH cna_journey AS
         ,a.ts
         ,CASE WHEN a.game_name LIKE 'Smashy%' THEN 'Smashy Pinata' ELSE a.game_name END AS location
         ,b.segment
-        ,CASE WHEN a.sessionid = c.sessionid THEN 'Yes' ELSE 'No' END AS acr_or_not
+        ,CASE WHEN location LIKE '%collect%' THEN 'Yes' ELSE 'No' END AS acr_or_not
        FROM prod_games.arcade.game_open a -- game open
        JOIN prod_games.arcade.engagement_segments b
        ON (a.userid = b.userid) AND ((YEAR(a.ts)||LPAD(MONTH(a.ts),2,'0')) = b.yearmonth)
@@ -60,7 +60,7 @@ WITH cna_journey AS
         ,a.ts
         ,CASE WHEN a.game_name LIKE 'Smashy%' THEN 'Smashy Pinata' ELSE a.game_name END AS location
         ,b.segment
-        ,CASE WHEN a.sessionid = c.sessionid THEN 'Yes' ELSE 'No' END AS acr_or_not
+        ,CASE WHEN location LIKE '%collect%' THEN 'Yes' ELSE 'No' END AS acr_or_not
        FROM prod_games.arcade.game_start a -- game start
        JOIN prod_games.arcade.engagement_segments b
        ON (a.userid = b.userid) AND ((YEAR(a.ts)||LPAD(MONTH(a.ts),2,'0')) = b.yearmonth)
@@ -77,7 +77,7 @@ WITH cna_journey AS
         ,a.ts
         ,'ACR' AS location
         ,b.segment
-        ,CASE WHEN a.sessionid = c.sessionid THEN 'Yes' ELSE 'No' END AS acr_or_not
+        ,CASE WHEN location LIKE '%ACR%' THEN 'Yes' ELSE 'No' END AS acr_or_not
        FROM prod_games.arcade.ACR a -- ACR
        JOIN prod_games.arcade.engagement_segments b
        ON (a.userid = b.userid) AND ((YEAR(a.ts)||LPAD(MONTH(a.ts),2,'0')) = b.yearmonth)
@@ -94,7 +94,7 @@ WITH cna_journey AS
         ,a.ts
         ,a.stunt_name AS location
         ,b.segment
-        ,CASE WHEN a.sessionid = c.sessionid THEN 'Yes' ELSE 'No' END AS acr_or_not
+        ,CASE WHEN location LIKE '%collect%' THEN 'Yes' ELSE 'No' END AS acr_or_not
        FROM prod_games.arcade.stunt_open a -- stunts
        JOIN prod_games.arcade.engagement_segments b
        ON (a.userid = b.userid) AND ((YEAR(a.ts)||LPAD(MONTH(a.ts),2,'0')) = b.yearmonth)
@@ -124,8 +124,9 @@ WITH cna_journey AS
  FROM user_journey
  GROUP BY 1,2,3,4;
  
--- Create SEGMENT_ACR_USER_JOURNEY_TABLE table
-CREATE TABLE SEGMENT_ACR_USER_JOURNEY_TABLE AS
+-- Update SEGMENT_ACR_USER_JOURNEY_TABLE table
+TRUNCATE TABLE SEGMENT_ACR_USER_JOURNEY_TABLE;
+INSERT INTO SEGMENT_ACR_USER_JOURNEY_TABLE 
 SELECT *
 FROM segment_acr_user_journey;
 
