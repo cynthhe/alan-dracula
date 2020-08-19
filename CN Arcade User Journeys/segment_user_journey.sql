@@ -25,7 +25,7 @@ WITH cna_journey AS
         ,a.ts
         ,a.screen_name AS location
         ,b.segment
-       FROM prod_games.arcade.screen_visit a -- screen visit, includes shop
+       FROM prod_games.arcade.screen_visit a -- screen visit
        JOIN prod_games.arcade.engagement_segments b
        ON (a.userid = b.userid) AND ((YEAR(a.ts)||LPAD(MONTH(a.ts),2,'0')) = b.yearmonth)
        WHERE a.sessionid IN (SELECT sessionid
@@ -51,34 +51,6 @@ WITH cna_journey AS
         a.userid
         ,a.sessionid
         ,a.ts
-        ,CASE WHEN a.game_name LIKE 'Smashy%' THEN 'Smashy Pinata' ELSE a.game_name END AS location
-        ,b.segment
-       FROM prod_games.arcade.game_start a -- game start
-       JOIN prod_games.arcade.engagement_segments b
-       ON (a.userid = b.userid) AND ((YEAR(a.ts)||LPAD(MONTH(a.ts),2,'0')) = b.yearmonth)
-       WHERE a.sessionid IN (SELECT sessionid
-                           FROM cna_journey
-                           GROUP BY 1)
-       GROUP BY 1,2,3,4,5
-       UNION ALL
-       SELECT
-        a.userid
-        ,a.sessionid
-        ,a.ts
-        ,'ACR' AS location
-        ,b.segment
-       FROM prod_games.arcade.ACR a -- ACR
-       JOIN prod_games.arcade.engagement_segments b
-       ON (a.userid = b.userid) AND ((YEAR(a.ts)||LPAD(MONTH(a.ts),2,'0')) = b.yearmonth)
-       WHERE a.sessionid IN (SELECT sessionid
-                           FROM cna_journey
-                           GROUP BY 1)
-       GROUP BY 1,2,3,4,5
-       UNION ALL
-       SELECT
-        a.userid
-        ,a.sessionid
-        ,a.ts
         ,a.stunt_name AS location
         ,b.segment
        FROM prod_games.arcade.stunt_open a -- stunts
@@ -91,7 +63,7 @@ WITH cna_journey AS
  GROUP BY 1,2,3,4,5)
 ,user_journey AS
 (SELECT
-    ts::DATE as date
+    ts::DATE AS date
     ,userid
     ,LISTAGG(location, ', ') within GROUP (ORDER BY action_sequence,ts ASC) AS journey
     ,segment
@@ -113,9 +85,9 @@ FROM segment_user_journey;
  
 -- Update SEGMENT_USER_JOURNEY_TABLE table
 TRUNCATE TABLE SEGMENT_USER_JOURNEY_TABLE;
-INSERT INTO SEGMENT_ACR_USER_JOURNEY_TABLE 
+INSERT INTO SEGMENT_USER_JOURNEY_TABLE 
 SELECT *
-FROM segment_acr_user_journey;
+FROM segment_user_journey;
 
 -- REPORTING schema
 USE DATABASE prod_games;
