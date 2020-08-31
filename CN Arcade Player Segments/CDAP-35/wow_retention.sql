@@ -5,8 +5,7 @@ USE warehouse wh_default;
 -- Create ARCADE_SEGMENT_WOW view
 CREATE OR REPLACE VIEW ARCADE_SEGMENT_WOW AS
 SELECT
-    year||'-'||week AS yearweek -- creates a week field that takes the year into account so it doesn't break as you transition from year to year.
-    --,RANK() OVER (PARTITION BY segment ORDER BY year,week,LEN(week) ASC) AS rank
+    week
     ,segment
     ,week0
     ,week1
@@ -20,21 +19,19 @@ FROM (SELECT
       FROM prod_games.arcade.apprunning a
       LEFT JOIN prod_games.arcade.apprunning b ON WEEK(b.submit_time) = WEEK(a.submit_time)+1 AND (a.userid = b.userid)
       JOIN prod_games.arcade.arcade_engagement_segments c ON (a.userid = c.userid) AND ((YEAR(a.submit_time)||LPAD(MONTH(a.submit_time),2,'0')) = c.yearmonth)
-      WHERE a.submit_time::DATE >= '3/4/2019' AND WEEK(a.submit_time) < WEEK(CURRENT_TIMESTAMP)+1
+      WHERE YEAR(a.submit_time) = '2020' AND WEEK(a.submit_time) < WEEK(CURRENT_TIMESTAMP)+1
       AND a.userid IN (SELECT userid 
                        FROM prod_games.arcade.FIRST_PLAYED_DATE 
                        WHERE START_DATE >= '3/4/2019')
       AND a.country LIKE 'US'
       GROUP BY 1,2,3)
-ORDER BY year,week,LEN(week) ASC;
+ORDER BY week ASC;
 
 -- Update the ARCADE_SEGMENT_WOW_TABLE
 TRUNCATE TABLE ARCADE_SEGMENT_WOW_TABLE;
 INSERT INTO ARCADE_SEGMENT_WOW_TABLE 
 SELECT *
 FROM ARCADE_SEGMENT_WOW;
-
-SELECT * FROM ARCADE_SEGMENT_WOW_TABLE;
 
 -- REPORTING schema
 USE DATABASE prod_games;
