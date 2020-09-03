@@ -21,6 +21,7 @@ FROM (SELECT
       WHERE b.country LIKE 'US' AND b.userid IN (SELECT userid 
                                                  FROM prod_games.arcade."FIRST_PLAYED_DATE" 
                                                  WHERE START_DATE >= '3/4/2019')
+      AND b.screen_name LIKE '%reward%'
       GROUP BY 1)
 GROUP BY 1,2;
 
