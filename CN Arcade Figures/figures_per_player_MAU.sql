@@ -24,4 +24,4 @@ FROM (SELECT
       AND b.screen_name LIKE '%reward%'
       GROUP BY 1)
 GROUP BY 1,2
-ORDER BY total_figures_owned ASC,distinct_figures_owned ASC;
+ORDER BY total_figures_owned ASC, distinct_figures_owned ASC;
