@@ -77,7 +77,7 @@ SELECT DISTINCT
 FROM arcade_session
 GROUP BY 1,2,3,4
 HAVING duration BETWEEN 1 AND 20 -- users who have played b/w 1-20 min
-ORDER BY RANDOM() LIMIT 20000; -- get simple random sample of 1000
+ORDER BY RANDOM() LIMIT 1000; -- get simple random sample of 1000
 
 -- Time in app per session (COVID)
 SELECT DISTINCT 
