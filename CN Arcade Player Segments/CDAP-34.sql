@@ -4,10 +4,10 @@ USE warehouse wh_default;
 
 -- Segmenting groups
 SELECT DISTINCT 
-    CASE
-        WHEN duration BETWEEN 0 AND 4 THEN 'Not engaged'
-        WHEN duration BETWEEN 4 AND 8 THEN 'Engaged'
-        WHEN duration > 8 THEN 'Ultra engaged'
+    CASE 
+        WHEN avg_time_per_day_this_month BETWEEN 0 AND 3 THEN 'Not engaged'
+        WHEN avg_time_per_day_this_month BETWEEN 4 AND 8 THEN 'Engaged'
+        WHEN avg_time_per_day_this_month > 8 THEN 'Ultra engaged'
         ELSE 'OTHERS'
         END AS segment
     ,COUNT(1) AS num_users
