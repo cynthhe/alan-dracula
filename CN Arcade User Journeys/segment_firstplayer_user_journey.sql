@@ -2,6 +2,16 @@ USE DATABASE prod_games;
 USE SCHEMA arcade;
 USE warehouse wh_default;
 
+//CREATE OR REPLACE VIEW app_version_onboarding AS
+//SELECT
+//    userid
+//    ,sessionid
+//    ,app_version
+//FROM prod_games.arcade.app_version
+//WHERE app_version LIKE '%1.3.3556%' OR app_version LIKE '%1.3.3568%' OR app_version LIKE '%1.3.3569%'
+//OR app_version LIKE '%1.3.3570%' OR app_version LIKE '%1.3.37%' OR app_version LIKE '%1.3.38%' OR app_version LIKE '%1.3.4%' OR app_version LIKE '%2.%'
+//AND app_version NOT LIKE '%ACC%' OR app_version NOT LIKE '%TEST%' OR app_version NOT LIKE '%DEBUG%';
+
 -- Create SEGMENT_FIRSTPLAYER_USER_JOURNEY view
 CREATE OR REPLACE VIEW segment_firstplayer_user_journey AS
 WITH cna_journey AS 
@@ -76,6 +86,7 @@ WITH cna_journey AS
     ,segment
     ,COUNT(DISTINCT userid) AS users
  FROM user_journey
+ WHERE journey LIKE '%Onboarding Video Stunt, /home%' OR journey LIKE '%/home, Onboarding Video Stunt%'
  GROUP BY 1,2,3;
  
 -- REPORTING schema
