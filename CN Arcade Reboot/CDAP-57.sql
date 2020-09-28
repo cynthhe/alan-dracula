@@ -10,67 +10,96 @@ USE warehouse wh_default;
 --
 create or replace view temp_data_set as
 select distinct
-    submit_time::DATE as date
+    date
     ,userid
     ,sessionid
-    ,duration
-from prod_games.arcade.apprunning
-where country like 'US' and userid in (select userid 
-                                       from prod_games.arcade.FIRST_PLAYED_DATE 
-                                       where START_DATE >= '3/4/2019') 
+from prod_games.arcade.arcade_perday
+where userid in (select userid 
+                 from prod_games.arcade.FIRST_PLAYED_DATE 
+                 where START_DATE >= '3/4/2019') 
 order by date;
 
 --
 create or replace view temp_inactive_num_users as
 select
-    a.submit_time::DATE as date
+    a.date
     ,count(distinct a.userid) as num_users
-from prod_games.arcade.apprunning a
+from prod_games.arcade.arcade_perday a
 left join prod_games.arcade.temp_data_set b
 on a.userid = b.userid
-where b.date not between a.submit_time::DATE - interval '30 days' and a.submit_time::DATE
-and a.submit_time::DATE >= to_date('2020-07-22')
-and a.country like 'US' and a.userid in (select userid
-                                         from prod_games.arcade.FIRST_PLAYED_DATE 
-                                         where START_DATE >= '3/4/2019')
+where b.date not between a.date - interval '30 days' and a.date
+and a.date >= to_date('2020-07-22')
+and a.userid in (select userid 
+                 from prod_games.arcade.FIRST_PLAYED_DATE 
+                 where START_DATE >= '3/4/2019'
+                 and country like 'US'
+                 )
 group by 1;
 
 --
 create or replace view temp_inactive_users as
 select distinct
     a.userid
-    ,a.submit_time::DATE as date
-from prod_games.arcade.apprunning a
+    ,a.date
+from prod_games.arcade.arcade_perday a
 left join prod_games.arcade.temp_data_set b
 on a.userid = b.userid
-where b.date not between a.submit_time::DATE - interval '30 days' and a.submit_time::DATE
-and a.country like 'US' and a.userid in (select userid
-                                         from prod_games.arcade.FIRST_PLAYED_DATE 
-                                         where START_DATE >= '3/4/2019')
-and a.submit_time::DATE >= to_date('2020-07-22');
+where b.date not between a.date - interval '30 days' and a.date
+and a.date >= to_date('2020-07-22')
+and a.userid in (select userid 
+               from prod_games.arcade.FIRST_PLAYED_DATE 
+               where START_DATE >= '3/4/2019'
+               and country like 'US'
+              );
+
+--
+create or replace view temp_num_days_active as
+select distinct
+    a.userid
+    ,count(distinct a.date) as num_days_active
+from prod_games.arcade.arcade_perday a
+left join prod_games.arcade.temp_data_set b
+on a.userid = b.userid
+where b.date not between a.date - interval '30 days' and a.date
+and a.date >= to_date('2020-07-22')
+and a.userid in (select userid 
+                 from prod_games.arcade.FIRST_PLAYED_DATE 
+                 where START_DATE >= '3/4/2019'
+                 and country like 'US'
+                 )
+group by 1;
 
 --
 create or replace view temp_calculations as
-select
-    submit_time::DATE as date
-    ,userid
-    ,duration
-    ,count(sessionid) as num_sessions
-from prod_games.arcade.apprunning
+select distinct
+    userid
+    ,date
+    ,sum(duration) as total_time
+    ,count(distinct sessionid) as num_sessions
+from prod_games.arcade.arcade_perday
 where userid in (select userid
                  from temp_inactive_users
                  group by 1
-                )
-and country like 'US'
-group by 1,2,3;
+                  )
+and userid in (select userid 
+               from prod_games.arcade.FIRST_PLAYED_DATE 
+               where START_DATE >= '3/4/2019'
+               and country like 'US'
+              )
+group by 1,2;
 
 --
-select
+select distinct
     a.date
     ,a.num_users
-    ,round(avg(b.duration)) as avg_time
+    ,round(avg(c.num_days_active)) as avg_days_active
+    ,round(avg(b.total_time)) as avg_time
     ,round(avg(b.num_sessions)) as avg_sessions
 from temp_inactive_num_users a
-left join temp_calculations b
+join temp_calculations b
 on a.date = b.date
+join temp_num_days_active c
+on b.userid = c.userid
 group by 1,2;
+
+//Avg No of active Days/Lifetime (i.e. from first launch to churn date) | average total sessions per user/lifetime | average total minutes playing per user/lifetime
