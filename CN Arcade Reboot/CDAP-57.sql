@@ -1,6 +1,6 @@
-USE DATABASE prod_games;
-USE SCHEMA arcade;
-USE warehouse wh_default;
+use database prod_games;
+use schema arcade;
+use warehouse wh_default;
 	
 //For a benchmark to aid CNA Reboot discovery re: expected game engagement during player lifetime, the games team needs to know following:
 //For current CN Arcade, if user churn is defined as players that have not launched the app in prior 30 days, 
@@ -8,6 +8,7 @@ USE warehouse wh_default;
 //Please provide number of session and time spent playing metrics for app churners within the previous 2-3 months. (July 22nd)
 
 --
+drop view temp_data_set;
 create or replace view temp_data_set as
 select distinct
     date
@@ -20,6 +21,7 @@ where userid in (select userid
 order by date;
 
 --
+drop view temp_inactive_num_users;
 create or replace view temp_inactive_num_users as
 select
     a.date
@@ -37,6 +39,7 @@ and a.userid in (select userid
 group by 1;
 
 --
+drop view temp_inactive_users;
 create or replace view temp_inactive_users as
 select distinct
     a.userid
@@ -53,6 +56,7 @@ and a.userid in (select userid
               );
 
 --
+drop view temp_num_days_active;
 create or replace view temp_num_days_active as
 select distinct
     a.userid
@@ -70,6 +74,7 @@ and a.userid in (select userid
 group by 1;
 
 --
+drop view temp_calculations;
 create or replace view temp_calculations as
 select distinct
     userid
@@ -88,7 +93,7 @@ and userid in (select userid
               )
 group by 1,2;
 
---
+-- Average # of active Days/lifetime (i.e. from first launch to churn date) | average total sessions per user/lifetime | average total minutes playing per user/lifetime
 select distinct
     a.date
     ,a.num_users
@@ -101,5 +106,3 @@ on a.date = b.date
 join temp_num_days_active c
 on b.userid = c.userid
 group by 1,2;
-
-//Avg No of active Days/Lifetime (i.e. from first launch to churn date) | average total sessions per user/lifetime | average total minutes playing per user/lifetime
