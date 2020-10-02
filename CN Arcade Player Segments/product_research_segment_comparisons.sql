@@ -87,3 +87,10 @@ ON a.userid = b.unity_id
 LEFT JOIN prod_games.arcade.research_segments c
 ON c.adobe_mcvid = b.adobe_id
 WHERE a.yearmonth = 202007;
+
+-- % difference between product and research segments
+SELECT
+    COUNT(CASE WHEN prod_segment = research_segment THEN 1 ELSE NULL END) AS equal
+    ,COUNT(CASE WHEN prod_segment != research_segment THEN 1 ELSE NULL END) AS not_equal
+    ,((ABS(equal - not_equal))/((equal + not_equal)/2))*100 AS percent_diff
+FROM segment_temp;
