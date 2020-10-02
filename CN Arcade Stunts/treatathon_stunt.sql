@@ -20,11 +20,11 @@ USE warehouse wh_default;
 //ACR Conversion
 //Game Economy
 
--- DAU who entered Treatathon stunt
-CREATE OR REPLACE VIEW treatathon_dau AS
+-- # of users who entered Treatathon stunt
+CREATE OR REPLACE VIEW treatathon_visits AS
 SELECT 
     submit_time::DATE AS date
-    ,COUNT(DISTINCT userid) AS dau
+    ,COUNT(DISTINCT userid) AS num_users
 FROM prod_games.arcade.stunt_open
 WHERE country LIKE 'US' AND userid IN (SELECT userid 
                                        FROM prod_games.arcade.FIRST_PLAYED_DATE 
@@ -33,29 +33,29 @@ AND stunt_name LIKE '%Halloween%' -- replace with stunt_name = 'stunt name'
 AND submit_time::DATE >= TO_DATE('2019-10-01') -- replace with submit_time::DATE >= TO_DATE('2020-10-01')
 GROUP BY 1;
 
--- WOW
-CREATE OR REPLACE VIEW treatathon_wow AS
-SELECT
-    week
-    ,week0
-    ,week1
-    ,week1/week0 AS wow_retention
-FROM (SELECT
-        YEAR(a.submit_time) AS year
-        ,WEEK(a.submit_time) AS week
-        ,COUNT(DISTINCT a.userid) as week0
-        ,COUNT(DISTINCT b.userid) as week1
-      FROM prod_games.arcade.stunt_open a
-      LEFT JOIN prod_games.arcade.stunt_open b ON WEEK(b.submit_time) = WEEK(a.submit_time)+1 AND (a.userid = b.userid)
-      WHERE YEAR(a.submit_time) = '2020' AND WEEK(a.submit_time) < WEEK(CURRENT_TIMESTAMP)+1
-      AND a.userid IN (SELECT userid 
-                       FROM prod_games.arcade.FIRST_PLAYED_DATE 
-                       WHERE START_DATE >= '3/4/2019')
-      AND a.country LIKE 'US'
-      AND a.stunt_name LIKE '%Halloween%' -- replace with stunt_name = 'stunt name'
-      AND a.submit_time::DATE >= TO_DATE('2019-10-01') -- replace with submit_time::DATE >= TO_DATE('2020-10-01')
-      GROUP BY 1,2)
-ORDER BY week ASC;
+//-- WOW
+//CREATE OR REPLACE VIEW treatathon_wow AS
+//SELECT
+//    week
+//    ,week0
+//    ,week1
+//    ,week1/week0 AS wow_retention
+//FROM (SELECT
+//        YEAR(a.submit_time) AS year
+//        ,WEEK(a.submit_time) AS week
+//        ,COUNT(DISTINCT a.userid) as week0
+//        ,COUNT(DISTINCT b.userid) as week1
+//      FROM prod_games.arcade.stunt_open a
+//      LEFT JOIN prod_games.arcade.stunt_open b ON WEEK(b.submit_time) = WEEK(a.submit_time)+1 AND (a.userid = b.userid)
+//      WHERE YEAR(a.submit_time) = '2020' AND WEEK(a.submit_time) < WEEK(CURRENT_TIMESTAMP)+1
+//      AND a.userid IN (SELECT userid 
+//                       FROM prod_games.arcade.FIRST_PLAYED_DATE 
+//                       WHERE START_DATE >= '3/4/2019')
+//      AND a.country LIKE 'US'
+//      AND a.stunt_name LIKE '%Halloween%' -- replace with stunt_name = 'stunt name'
+//      AND a.submit_time::DATE >= TO_DATE('2019-10-01') -- replace with submit_time::DATE >= TO_DATE('2020-10-01')
+//      GROUP BY 1,2)
+//ORDER BY week ASC;
 
 -- From the Treatathon stunt, where did the user go next?
 CREATE OR REPLACE VIEW treatathon_user_journey AS
@@ -131,20 +131,5 @@ SELECT
 FROM journey_data
 GROUP BY 1,2,3,4,5,6;
 
--- Neon economy
-CREATE OR REPLACE VIEW arcade_neon_economy AS
-SELECT DISTINCT
-    a.submit_time::DATE AS date
-    ,SUM(b.currency_amount) AS total_gained
-    ,SUM(a.purchased_item_price) AS total_spent
-    ,(total_gained - total_spent) AS neon_net_total
-    ,COUNT(DISTINCT a.userid) AS num_users
-FROM prod_games.arcade.purchase a
-JOIN prod_games.arcade.currency_claimed b
-ON a.userid = b.userid AND a.submit_time::DATE = b.submit_time::DATE
-WHERE a.userid IN (SELECT userid
-                 FROM prod_games.arcade.FIRST_PLAYED_DATE
-                 WHERE START_DATE >= '3/4/2019')
-//WHERE a.userid = 'e7ca06ae279614cdb85d49f632f3cc4a'
-AND a.submit_time::DATE >= TO_DATE('2019-10-07') -- replace with submit_time::DATE >= TO_DATE('2020-10-01')
-GROUP BY 1;
+-- How many users who were not collecting before were converted by this stunt?
+//before the stunt: users who never acr'ed ever in their lifetime? if this stunt converted them to acr?
