@@ -63,9 +63,9 @@ SELECT
     ,userid
     ,total_min
     ,CASE 
-        WHEN total_min BETWEEN 0 AND 21 THEN 'Not engaged'
-        WHEN total_min BETWEEN 22 AND 81 THEN 'Engaged'
-        WHEN total_min > 81 THEN 'Ultra engaged'
+        WHEN total_min BETWEEN 0 AND 20 THEN 'Not engaged'
+        WHEN total_min BETWEEN 21 AND 80 THEN 'Engaged'
+        WHEN total_min > 80 THEN 'Ultra engaged'
         ELSE 'OTHERS'
         END AS segment
 FROM arcade_permonth
@@ -78,10 +78,12 @@ SELECT
     ,b.unity_id
     ,b.adobe_id
     ,a.segment AS prod_segment
-    ,a.total_min
+    //,a.total_min
+    ,a.avg_time_per_day_this_month
     ,c.research_segment
     ,c.total_visits
-FROM prod_games.arcade.arcade_engagement_segments_revised a
+//FROM prod_games.arcade.arcade_engagement_segments_revised a
+FROM prod_games.arcade.arcade_engagement_segments a
 JOIN prod_games.arcade.unity_adobe_ids b
 ON a.userid = b.unity_id
 LEFT JOIN prod_games.arcade.research_segments c
