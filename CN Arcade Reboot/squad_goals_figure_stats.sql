@@ -39,19 +39,19 @@ from (select
       where userid in (select play_userid
                        from game_start
                        where game_name = 'Squad Goals'
-                       and submit_time::date between to_date('2020-06-15') and to_date('2020-06-21')
+                       and submit_time::date between to_date('2020-08-10') and to_date('2020-08-16')
                       )
-      and (title = 'Adventure Time Mao Mao & Badgerclops'
-           or title != 'Adorabrat'
-           or title != 'Tanya Keys'
-           or title != 'Rufus & Reggie'
-           or title != 'Mail Mole'
-           or title != 'Clark Lockjaw'
-           or title != 'Sheriff Snugglemagne'
-           or title != 'Pet Prom Mao Mao'
-           or title != 'Stinky Badgerclops'
+      and (title != 'Gumshoe Robin'
+           or title != 'Carl San Pedro'
+           or title != 'Bollywood Beast Boy'
+           or title != 'Bollywood Raven'
+           or title != 'Bollywood Cyborg'
+           or title != 'Bollywood Starfire'
+           or title != 'Dragon Beast Boy'
+           or title != 'Three-Eyed Raven'
+           or title != 'King in the North Robin'
           )
-      and date between to_date('2020-06-15') and to_date('2020-06-21')
+      and date between to_date('2020-08-10') and to_date('2020-08-16')
      );
 
 -- # of users who played Squad Goals and collected x amount of distinct figures for Squad Goals that week
@@ -60,21 +60,21 @@ with figure_list as
         userid
         ,count(distinct title) as distinct_figures
      from gdb_gotreward
-     where date between to_date('2020-06-15') and to_date('2020-06-21')
+     where date between to_date('2020-08-10') and to_date('2020-08-16')
      and userid in (select play_userid
                        from game_start
                        where game_name = 'Squad Goals'
-                       and submit_time::date between to_date('2020-06-15') and to_date('2020-06-21')
+                       and submit_time::date between to_date('2020-08-10') and to_date('2020-08-16')
                    )
-     and (title = 'Adventure Time Mao Mao & Badgerclops'
-           or title = 'Adorabrat'
-           or title = 'Tanya Keys'
-           or title = 'Rufus & Reggie'
-           or title = 'Mail Mole'
-           or title = 'Clark Lockjaw'
-           or title = 'Sheriff Snugglemagne'
-           or title = 'Pet Prom Mao Mao'
-           or title = 'Stinky Badgerclops'
+     and (title = 'Gumshoe Robin'
+           or title = 'Carl San Pedro'
+           or title = 'Bollywood Beast Boy'
+           or title = 'Bollywood Raven'
+           or title = 'Bollywood Cyborg'
+           or title = 'Bollywood Starfire'
+           or title = 'Dragon Beast Boy'
+           or title = 'Three-Eyed Raven'
+           or title = 'King in the North Robin'
          )
      group by 1
     )
@@ -106,13 +106,13 @@ select distinct
     title
     ,rarity
 from gdb_gotreward
-where title like '%Adventure Time Mao Mao & Badgerclops%'
-    or title like '%Adorabrat%'
-    or title like '%Tanya Keys%'
-    or title like '%Rufus & Reggie%'
-    or title like '%Mail Mole%'
-    or title like '%Clark Lockjaw%'
-    or title like '%Sheriff Snugglemagne%'
-    or title like '%Pet Prom Mao Mao%'
-    or title like '%Stinky Badgerclops%'
+where title = 'Gumshoe Robin'
+    or title = 'Carl San Pedro'
+    or title = 'Bollywood Beast Boy'
+    or title = 'Bollywood Raven'
+    or title = 'Bollywood Cyborg'
+    or title = 'Bollywood Starfire'
+    or title = 'Dragon Beast Boy'
+    or title = 'Three-Eyed Raven'
+    or title = 'King in the North Robin'
 group by 1,2;
