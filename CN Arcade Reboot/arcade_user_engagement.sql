@@ -4,10 +4,11 @@ USE SCHEMA reporting;
 USE warehouse wh_default;
 
 create or replace view arcade_user_engagement as
+-- who used it and what month they used it
 with monthly_usage as (
   select distinct
     userid 
-    ,datediff(month, '2019-03-04', submit_time::DATE) as time_period
+    ,datediff(month, '2019-03-04', submit_time::DATE) as time_period -- # of months since 3/4/2019
   from prod_games.arcade.apprunning
   where userid in (select userid 
                    from prod_games.arcade.FIRST_PLAYED_DATE 
@@ -17,14 +18,18 @@ with monthly_usage as (
   group by 1,2 
   order by 1,2
 )
+-- what is the next and previous month they used it, partitioned by user
 ,lag_lead as (
   select
     userid
     ,time_period
-    ,lag(time_period,1) over (partition by userid order by userid, time_period) as lag
-    ,lead(time_period,1) over (partition by userid order by userid, time_period) as lead
+    ,lag(time_period,1) over (partition by userid order by userid, time_period) as lag -- previous month they used it
+    ,lead(time_period,1) over (partition by userid order by userid, time_period) as lead -- next month they used it
   from monthly_usage
 )
+-- the difference between their current month and the next month
+-- if it's 1, the user came back the next month
+-- if it's 2+, there's a churn
 ,lag_lead_with_diffs as (
   select 
     userid
@@ -37,7 +42,8 @@ with monthly_usage as (
 )
 ,calculated as (
   select 
-    time_period
+    userid
+    ,time_period
     ,case when lag is null then 'NEW'
         when lag_size = 1 then 'ACTIVE'
         when lag_size > 1 then 'RETURN'
@@ -45,23 +51,22 @@ with monthly_usage as (
     ,case when (lead_size > 1 OR lead_size IS NULL) then 'CHURN'
         else NULL
         end as next_month_churn
-    ,count(distinct userid) as num_users
   from lag_lead_with_diffs
-  group by 1,2,3
 )
 select 
     time_period
     ,this_month_value
-    ,sum(num_users) as num_users
+    ,count(distinct userid) as num_users
 from calculated
 group by 1,2
 union
 select 
     time_period+1
-    ,'CHURN'
-    ,num_users
+    ,next_month_churn
+    ,count(distinct userid) as num_users
 from calculated
 where next_month_churn is not null
+group by 1,2
 order by 1;
 
 -- Looker permissions for reporting view
