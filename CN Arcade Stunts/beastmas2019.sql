@@ -41,7 +41,9 @@ AND (title = 'Elf Beast Boy'
 -- What % of current CNA players (i.e. within last 30 days) have any of the Beastmas figures in their collection?
 SELECT
     title
-    ,ROUND(((num_users / 13778) * 100), 2) AS percent_of_total
+    ,ROUND(((num_users / (SELECT COUNT(DISTINCT userid) 
+                          FROM prod_games.arcade.apprunning 
+                          WHERE submit_time::DATE >= DATEADD(day,-30,CURRENT_DATE()) AND submit_time::DATE <= CURRENT_DATE())) * 100), 2) AS percent_of_total
 FROM (SELECT
         title
         ,COUNT(DISTINCT userid) AS num_users
