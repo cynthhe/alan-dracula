@@ -282,6 +282,31 @@ GROUP BY 1,2
 UNION
 SELECT DISTINCT
     achievement_name
+    ,CASE WHEN game_name LIKE '%Maze' THEN 'Maiz Maze' ELSE game_name END AS game_name
+    ,(COUNT(DISTINCT userid)/ (SELECT COUNT(DISTINCT userid) 
+                                     FROM prod_games.arcade.game_start
+                                     WHERE country LIKE 'US' AND userid IN (SELECT userid
+                                                                            FROM prod_games.arcade.first_played_date
+                                                                            WHERE start_date >= '3/4/2019')
+                                     AND game_name LIKE '%Maze' -- Specify game name here
+                              )
+     ) AS percent_of_users
+FROM prod_games.arcade.achievement
+WHERE game_name LIKE '%Maze' -- Specify game name here
+AND achievement_name IS NOT NULL
+AND (achievement_name != '500'
+     AND achievement_name != 'Grand'
+     AND achievement_name != 'Boosted'
+     AND achievement_name != 'Dy-no-mite'
+     AND achievement_name != 'Worm Sign'
+     AND achievement_name != 'Sal-utations'
+     AND achievement_name != 'All Skins'
+     AND achievement_name != 'Like Brothers'
+    )
+GROUP BY 1,2
+UNION
+SELECT DISTINCT
+    achievement_name
     ,game_name
     ,(COUNT(DISTINCT userid)/ (SELECT COUNT(DISTINCT userid) 
                                      FROM prod_games.arcade.game_start
