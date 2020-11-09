@@ -18,7 +18,10 @@ SELECT DISTINCT
     ,COUNT(DISTINCT userid) AS num_users
 FROM (SELECT DISTINCT
         userid
-        ,CASE WHEN game_name LIKE 'Smashy%' THEN 'Smashy Pinata' ELSE game_name END AS game_name
+        ,CASE WHEN game_name LIKE 'Smashy%' THEN 'Smashy Pinata' 
+            WHEN game_name LIKE '%Maze' THEN 'Maize Maze'
+            ELSE game_name 
+            END AS game_name
         ,MAX(rank_number) AS max_rank_number
       FROM prod_games.arcade.achievement
       WHERE rank_number IS NOT NULL
@@ -38,6 +41,7 @@ FROM (SELECT DISTINCT
            OR game_name = 'Gumball''s Block Party'
            OR game_name = 'Jelly of the Beast'
            OR game_name = 'Kicked Out'
+           OR game_name LIKE '%Maze'
            OR game_name = 'Mechanoid Menace'
            OR game_name = 'Monster Kicks'
            OR game_name = 'Rainbow Wreckers'
