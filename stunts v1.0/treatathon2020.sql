@@ -2,24 +2,6 @@ USE DATABASE prod_games;
 USE SCHEMA arcade;
 USE warehouse wh_default;
 
-//ACR Conversion:
-//
-//How many users who were not collecting before were converted by this stunt?
-//Game Economy:
-//
-//How many neons are being spent? How does that compare to other
-//time periods that are not similar to the stunt/where there was no stunt at all?
-//Does this stunt remove currency from the game?
-//What levers do we need to pull to drain economy?
-//Determine whether revenue needs to be looked at an economy level as a whole or player level.
-//Dashboard Layout:
-//
-//DAU (daily active users)
-//WOW (week over week)
-//# of users who went where (ACR/Squad Goals/Shop) from the stunt page
-//ACR Conversion
-//Game Economy
-
 -- # of users who entered Treatathon stunt
 SELECT 
     submit_time::DATE AS date
@@ -137,6 +119,3 @@ GROUP BY 1,2,3,4,5,6;
 
 -- Looker permissions for reporting view
 GRANT SELECT ON prod_games.reporting.treatathon_user_journey TO looker_read;
-
--- How many users who were not collecting before were converted by this stunt?
-//before the stunt: users who never acr'ed ever in their lifetime? if this stunt converted them to acr?
