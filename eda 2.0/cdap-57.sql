@@ -2,10 +2,10 @@ use database prod_games;
 use schema arcade;
 use warehouse wh_default;
 	
-//For a benchmark to aid CNA Reboot discovery re: expected game engagement during player lifetime, the games team needs to know following:
-//For current CN Arcade, if user churn is defined as players that have not launched the app in prior 30 days, 
+//For a benchmark to aid v2.0 discovery:
+//For v1.0, if user churn is defined as players that have not launched the app in prior 30 days, 
 //how many sessions and how much time spent in-app do players engage during their lifetime (i.e. from first launch through churn)? 
-//Please provide number of session and time spent playing metrics for app churners within the previous 2-3 months. (July 22nd)
+//Provide number of session and time spent playing metrics for app churners within the previous 2-3 months. (July 22nd)
 
 --
 drop view temp_data_set;
