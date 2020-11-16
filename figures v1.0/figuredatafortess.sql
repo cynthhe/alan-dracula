@@ -1,3 +1,7 @@
+USE DATABASE prod_games;
+USE SCHEMA arcade;
+USE warehouse wh_default;
+
 CREATE OR REPLACE VIEW FIGUREDATAFORTESS AS
 SELECT
     date
@@ -29,3 +33,16 @@ FROM (SELECT
       GROUP BY 1,2,3,4,5,6,7,8,9
      )
 GROUP BY 1,2,3,4;
+
+-- REPORTING schema
+USE DATABASE prod_games;
+USE SCHEMA reporting;
+USE warehouse wh_default;
+
+-- Create reporting view: ARCADE_SEGMENT_ACR_VIEW
+CREATE OR REPLACE VIEW FIGUREDATAFORTESS AS
+SELECT *
+FROM prod_games.arcade.FIGUREDATAFORTESS;
+
+-- Looker permissions for reporting view
+GRANT SELECT ON prod_games.reporting.FIGUREDATAFORTESS TO looker_read;
