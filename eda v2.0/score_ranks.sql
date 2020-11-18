@@ -31,6 +31,7 @@ FROM (SELECT DISTINCT
            OR game_name = 'Brains vs Bugs'
            OR game_name = 'Burger & Burrito'
            OR game_name = 'Camp Cardboard'
+           OR game_name = 'Cut It Out (FULL)'
            OR game_name = 'Diamond Alliance'
            OR game_name = 'Dodge Squad'
            OR game_name = 'Fangs of Fire'
