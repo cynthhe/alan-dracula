@@ -7,15 +7,16 @@ select count(distinct userid)
 from prod_games.arcade.gdb_gotreward
 where title is not null
 and (title = 'Scientist Bubblegum'
-    or title = 'Olive'
-    or title = 'Young Marcy'
-    or title = 'Sheriff BMO'
-    or title = 'Spacesuit BMO'
-    or title = 'Glass Boy'
-    or title = 'See-Through Princess'
-    or title = 'Y-5'
-    or title = 'Mr. M'
-    or title = 'Young Finn & Jake'
+     or title = 'Olive'
+     or title = 'Young Marcy'
+     or title = 'Sheriff BMO'
+     or title = 'Spacesuit BMO'
+     or title = 'Glass Boy'
+     or title = 'See-Through Princess'
+     or title = 'Y-5'
+     or title = 'Mr. M'
+     or title = 'Young Finn & Jake'
+     or title = 'Bubbline'
     );
     
 -- # of users who collected x distinct figures for AT Distant Lands island
@@ -26,6 +27,7 @@ with figure_list as
      from gdb_gotreward
      where title is not null
      and (title = 'Scientist Bubblegum'
+           or title = 'Saint Marceline'
            or title = 'Olive'
            or title = 'Young Marcy'
            or title = 'Sheriff BMO'
@@ -35,7 +37,9 @@ with figure_list as
            or title = 'Y-5'
            or title = 'Mr. M'
            or title = 'Young Finn & Jake'
+           or title = 'Bubbline'
          )
+     and date >= to_date('2020-11-19')
      group by 1
     )
 ,count_users as
@@ -51,6 +55,8 @@ with figure_list as
             when distinct_figures = 8 then count(distinct userid)
             when distinct_figures = 9 then count(distinct userid)
             when distinct_figures = 10 then count(distinct userid)
+            when distinct_figures = 11 then count(distinct userid)
+            when distinct_figures = 12 then count(distinct userid)
             else 'not valid'
             end as num_users
      from figure_list
