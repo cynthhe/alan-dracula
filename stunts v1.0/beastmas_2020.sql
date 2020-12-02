@@ -8,7 +8,7 @@ USE SCHEMA reporting;
 USE warehouse wh_default;
 
 -- From the Beastmas stunt, where did the user go next?
-CREATE OR REPLACE VIEW beastmas_user_journey AS
+CREATE OR REPLACE VIEW beastmas2020_user_journey AS
 WITH beastmas_users AS
     (SELECT
         ts AS playtime
@@ -82,4 +82,4 @@ FROM journey_data
 GROUP BY 1,2,3,4,5,6;
 
 -- Looker permissions for reporting view
-GRANT SELECT ON prod_games.reporting.beastmas_user_journey TO looker_read;
+GRANT SELECT ON prod_games.reporting.beastmas2020_user_journey TO looker_read;
