@@ -96,8 +96,7 @@ and country like 'US' and userid in (select userid
                                      from prod_games.arcade.first_played_date
                                      where start_date >= '3/4/2019'
                                     )
-group by 1
-order by day_of_week desc;
+group by 1;
 
 -- Hour of the day usage for all CNA users
 select distinct
@@ -167,5 +166,4 @@ and country like 'US' and userid in (select userid
                                      from prod_games.arcade.first_played_date
                                      where start_date >= '3/4/2019'
                                     )
-group by 1
-order by num_users desc;
+group by 1;
