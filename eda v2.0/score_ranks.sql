@@ -47,6 +47,7 @@ FROM (SELECT DISTINCT
            OR game_name = 'Monster Kicks'
            OR game_name = 'Rainbow Wreckers'
            OR game_name = 'Rainicorn''s Flying Colors'
+           OR game_name = 'Ready to Roar'
            OR game_name = 'Rock ''n'' Rush'
            OR game_name = 'Royal Highness'
            OR game_name = 'Rumble Bee'
