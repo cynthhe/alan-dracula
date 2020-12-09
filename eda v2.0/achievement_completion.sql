@@ -115,6 +115,22 @@ SELECT DISTINCT
                                      WHERE country LIKE 'US' AND userid IN (SELECT userid
                                                                             FROM prod_games.arcade.first_played_date
                                                                             WHERE start_date >= '3/4/2019')
+                                     AND game_name = 'Cut It Out (FULL)' -- Specify game name here
+                              )
+     ) AS percent_of_users
+FROM prod_games.arcade.achievement
+WHERE game_name = 'Cut It Out (FULL)' -- Specify game name here
+AND achievement_name IS NOT NULL
+GROUP BY 1,2
+UNION
+SELECT DISTINCT
+    achievement_name
+    ,game_name
+    ,(COUNT(DISTINCT userid)/ (SELECT COUNT(DISTINCT userid) 
+                                     FROM prod_games.arcade.game_start
+                                     WHERE country LIKE 'US' AND userid IN (SELECT userid
+                                                                            FROM prod_games.arcade.first_played_date
+                                                                            WHERE start_date >= '3/4/2019')
                                      AND game_name = 'Diamond Alliance' -- Specify game name here
                               )
      ) AS percent_of_users
@@ -366,6 +382,22 @@ SELECT DISTINCT
      ) AS percent_of_users
 FROM prod_games.arcade.achievement
 WHERE game_name = 'Rainicorn''s Flying Colors' -- Specify game name here
+AND achievement_name IS NOT NULL
+GROUP BY 1,2
+UNION
+SELECT DISTINCT
+    achievement_name
+    ,game_name
+    ,(COUNT(DISTINCT userid)/ (SELECT COUNT(DISTINCT userid) 
+                                     FROM prod_games.arcade.game_start
+                                     WHERE country LIKE 'US' AND userid IN (SELECT userid
+                                                                            FROM prod_games.arcade.first_played_date
+                                                                            WHERE start_date >= '3/4/2019')
+                                     AND game_name = 'Ready to Roar' -- Specify game name here
+                              )
+     ) AS percent_of_users
+FROM prod_games.arcade.achievement
+WHERE game_name = 'Ready to Roar' -- Specify game name here
 AND achievement_name IS NOT NULL
 GROUP BY 1,2
 UNION
