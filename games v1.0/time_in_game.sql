@@ -3,7 +3,7 @@ use database prod_games;
 use schema reporting;
 use warehouse wh_default;
 
-create or replace view PROD_GAMES.REPORTING.ARCADE_TIME_IN_GAME as
+create or replace view prod_games.reporting.arcade_time_in_game as
 select
     date
     ,userid
@@ -19,4 +19,4 @@ select
 from arcade.arcade_time_in_game_old;
 
 -- Looker permissions for reporting view
-grant select on prod_games.reporting.ARCADE_TIME_IN_GAME to looker_read;
+grant select on prod_games.reporting.arcade_time_in_game to looker_read;
