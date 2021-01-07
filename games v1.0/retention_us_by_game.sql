@@ -3,7 +3,7 @@ use database prod_games;
 use schema reporting;
 use warehouse wh_default;
 
-create or replace view PROD_GAMES.REPORTING.ARCADE_RETENTION_US_BY_GAME as
+create or replace view prod_games.reporting.arcade_retention_us_by_game as
 select  
     case when Game like 'Smashy%' then 'Smashy Pinata'
         when Game like '%Maze' then 'Maize Maze'
@@ -22,4 +22,4 @@ select
 from prod_games.reporting.ARCADE_RETENTION_US_BY_GAME_table;
 
 -- Looker permissions for reporting view
-grant select on prod_games.reporting.ARCADE_RETENTION_US_BY_GAME to looker_read;
+grant select on prod_games.reporting.arcade_retention_us_by_game to looker_read;
