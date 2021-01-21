@@ -40,6 +40,7 @@ FROM (SELECT DISTINCT
            OR game_name = 'Galaxy Warp'
            OR game_name = 'Go Go K.O.!'
            OR game_name = 'Gumball''s Block Party'
+           OR game_name = 'Hydro Blast'
            OR game_name = 'Jelly of the Beast'
            OR game_name = 'Kicked Out'
            OR game_name LIKE '%Maze'
