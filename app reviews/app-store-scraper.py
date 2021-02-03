@@ -69,9 +69,12 @@ def get_reviews(app_id, page=1) -> typing.List[dict]:
             {
                 'review_id': entry.get('id').get('label'),
                 'title': entry.get('title').get('label'),
+                'author': entry.get('author').get('name').get('label'),
+                'author_url': entry.get('author').get('uri').get('label'),
                 'version': entry.get('im:version').get('label'),
                 'rating': entry.get('im:rating').get('label'),
                 'review': entry.get('content').get('label'),
+                'vote_count': entry.get('im:voteCount').get('label')
             }
             for entry in data_feed.get('entry')
             if not entry.get('im:name')
@@ -81,9 +84,9 @@ def get_reviews(app_id, page=1) -> typing.List[dict]:
 
 
 reviews = get_reviews('1419766606')
-# print(len(reviews))
-# pprint.pprint(reviews)
+print(len(reviews))
+pprint.pprint(reviews)
 
-df = pd.DataFrame(reviews, columns=['review_id', 'title', 'version', 'rating', 'review'])
-
-df.to_csv("cna-app-reviews.csv", encoding='utf8', index=False)
+# df = pd.DataFrame(reviews, columns=['review_id', 'title', 'version', 'rating', 'review'])
+#
+# df.to_csv("cna-app-reviews.csv", encoding='utf8', index=False)
