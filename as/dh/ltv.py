@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Created on Tue Sep  1 11:41:29 2020
-@author: kfmah
+@author: che
 """
 
 from __future__ import division
@@ -29,7 +29,7 @@ import pmdarima as pm
 
 #%% security
 
-email = 'KYLE.MAHRE@WARNERMEDIA.COM'
+email = 'CYNTHIA.HE@WARNERMEDIA.COM'
 secret_password = 'Strolling_Jim1'
 
 #%%
